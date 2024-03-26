@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input[type=text],
+input[type=text]:focus {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+@layer components {
+    .toggle-status {
+        @apply w-10 h-4 transition duration-300 rounded-full relative block text-[0px] bg-gray-500 cursor-pointer;
+    }
+
+    .toggle-status::before {
+        content: '';
+        @apply w-6 h-6 top-1/2 -translate-y-1/2 transition duration-300 rounded-full absolute bg-gray-400;
+    }
+
+    input[type=checkbox]:checked ~ .toggle-status {
+        @apply bg-blue-500;
+    }
+
+    input[type=checkbox]:checked ~ .toggle-status::before  {
+        @apply translate-x-4 bg-blue-400;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+
+    .options-type {
+        @apply transition shadow rounded-full border border-blue-500 font-medium text-center text-blue-500 hover:text-white hover:bg-blue-500 cursor-pointer mr-4 py-2 px-6;
+    }
+
+    input[type=radio]:checked ~ .options-type {
+        @apply hover:border-blue-400 text-white bg-blue-500 hover:bg-blue-400;
+    }
+}
