@@ -6,7 +6,7 @@ use App\Filament\Resources\BankResource\Pages;
 use App\Filament\Resources\BankResource\RelationManagers;
 use App\Models\Bank;
 use Filament\Forms;
-use Filament\Forms\Components\{FileUpload, Section, TextInput};
+use Filament\Forms\Components\{ColorPicker, DatePicker, FileUpload, Section, Textarea, TextInput};
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -30,10 +30,29 @@ class BankResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(12)
             ->schema([
-                TextInput::make('title')
-                    ->label('Banco')
-                    ->columnSpan('full'),
+                Section::make()
+                    ->columnSpan(9)
+                    ->schema([
+                        TextInput::make('title')
+                            ->label('Banco')
+                            ->columnSpan('full'),
+                        Textarea::make('description')
+                            ->label('Descrição')
+                    ]),
+                Section::make()
+                    ->columnSpan(3)
+                    ->schema([
+                        ColorPicker::make('color')
+                            ->label('Cor'),
+                        FileUpload::make('icon_bank')
+                            ->label('Ícone'),
+                        DatePicker::make('created_at')
+                            ->label('Criado em')
+                            ->hiddenOn('create')
+                            ->disabled()
+                    ])
             ]);
     }
 
@@ -43,9 +62,12 @@ class BankResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label('Banco'),
+                Tables\Columns\TextColumn::make('description')
+                    ->label('Descrição'),
                 Tables\Columns\ImageColumn::make('icon_bank')
                     ->label('Ícone')
             ])
+            ->defaultSort('title', 'asc')
             ->filters([
                 //
             ])

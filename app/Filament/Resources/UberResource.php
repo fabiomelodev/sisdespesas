@@ -54,7 +54,7 @@ class UberResource extends Resource
                         DatePicker::make('pay_day')
                             ->label('Data de pagamento')
                             ->displayFormat('d/m/Y')
-                            ->required(fn(Get $get) => $get('type') == 'inconstante' ?: false)
+                            ->required()
                             ->columnSpan('full'),
                         Select::make('level')
                             ->label('Nível')
@@ -78,10 +78,12 @@ class UberResource extends Resource
                     ->schema([
                         TextInput::make('value')
                             ->label('Valor')
-                            ->prefix('R$'),
+                            ->prefix('R$')
+                            ->required(),
                         Select::make('automobile')
                             ->label('Automóvel')
                             ->placeholder('Selecionar')
+                            ->required()
                             ->options([
                                 'car'        => 'Carro',
                                 'motorcycle' => 'Moto'
@@ -89,6 +91,7 @@ class UberResource extends Resource
                         Select::make('means_payment')
                             ->label('Meio de pagamento')
                             ->placeholder('Selecionar')
+                            ->required()
                             ->options([
                                 'Crédito'  => 'Crédito',
                                 'Débito'   => 'Débito',
@@ -97,6 +100,7 @@ class UberResource extends Resource
                             ]),
                         Select::make('bank_id')
                             ->label('Banco')
+                            ->required()
                             ->relationship('bank', 'title', function (Builder $query) {
                                 $query->where('user_id', Auth::user()->id);
                             })
@@ -132,7 +136,7 @@ class UberResource extends Resource
                     ->formatStateUsing(fn(string $state): string => 'R$ ' . $state),
             ])->defaultSort('pay_day', 'desc')
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                // Tables\Actions\CreateAction::make(),
             ])
             ->filters([
                 //

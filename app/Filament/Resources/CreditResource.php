@@ -6,7 +6,7 @@ use App\Filament\Resources\CreditResource\Pages;
 use App\Filament\Resources\CreditResource\RelationManagers;
 use App\Models\Credit;
 use Filament\Forms;
-use Filament\Forms\Components\{Section, Select, TextInput};
+use Filament\Forms\Components\{DatePicker, Section, Select, TextInput, Wizard};
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -20,32 +20,77 @@ class CreditResource extends Resource
 {
     protected static ?string $model = Credit::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $label = 'Crédito';
+
+    protected static ?string $pluralLabel = 'Créditos';
+
+    protected static ?int $navigationSort = 3;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Créditos');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->columns(12)
             ->schema([
-                Section::make()
-                    ->columnSpan(9)
-                    ->schema([
-                        TextInput::make('title')
-                            ->label('Título')
-                    ]),
-                Section::make()
-                    ->columnSpan(3)
-                    ->schema([
-                        TextInput::make('value')
-                            ->label('Limite')
-                            ->prefix('R$'),
-                        Select::make('bank_id')
-                            ->label('Banco')
-                            // ->relationship('bank', 'title', function (Builder $query) {
-                            //     $query->where('user_id', Auth::user()->id);
-                            // })
-                            ->required(fn(Get $get) => $get('type') == 'inconstante' ?: false),
-                    ])
+                Wizard::make([
+                    Wizard\Step::make('Tipo')
+                        ->columns(2)
+                        ->schema([
+                            Select::make('type')
+                                ->label('Tipo')
+                                ->required()
+                                ->live()
+                                ->options([
+                                    'vista'     => 'À vista',
+                                    'parcelado' => 'Parcelado'
+                                ]),
+                            TextInput::make('number_installments')
+                                ->label('Quantidade de parcelas')
+                                ->numeric()
+                                ->hidden(fn(Get $get) => $get('type') == 'parcelado' ? false : true)
+                                ->required(fn(Get $get) => $get('type') == 'parcelado' ? true : false)
+                        ]),
+                    Wizard\Step::make('Crédito')
+                        ->columns(12)
+                        ->schema([
+                            Section::make()
+                                ->columnSpan(9)
+                                ->schema([
+                                    TextInput::make('title')
+                                        ->label('Título')
+                                        ->required(),
+                                    DatePicker::make('pay_day')
+                                        ->label('Data do pagamento')
+                                        ->displayFormat('d/m/Y')
+                                        ->required()
+                                ]),
+                            Section::make()
+                                ->columnSpan(3)
+                                ->schema([
+                                    TextInput::make('value')
+                                        ->label('Valor')
+                                        ->prefix('R$')
+                                        ->required(),
+                                    TextInput::make('current_pensionem')
+                                        ->label('Parcela atual')
+                                        ->numeric()
+                                        ->required()
+                                        ->default(1),
+                                    Select::make('invoice_id')
+                                        ->label('Fatura')
+                                        ->required()
+                                        ->relationship(
+                                            'invoice',
+                                            'title',
+                                            fn(Builder $query) => $query->where('user_id', Auth::user()->id)
+                                        )
+                                ])
+                        ]),
+                ])->columnSpan('full'),
             ]);
     }
 
@@ -53,7 +98,27 @@ class CreditResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Título'),
+                Tables\Columns\TextColumn::make('current_pensionem')
+                    ->label('Parcela')
+                    ->formatStateUsing(function (Credit $record) {
+                        if ($record->number_installments) {
+                            return $record->current_pensionem . '/' . $record->number_installments;
+                        }
+
+                        return $record->current_pensionem . '/' . $record->current_pensionem;
+                    })
+                    ->badge(),
+                Tables\Columns\TextColumn::make('invoice.title')
+                    ->label('Fatura'),
+                // ->formatStateUsing(fn(Credit $record) => $record->invoice()->first()->title . ' - ' . $record->invoice()->first()->cardCredit()->first()->title),
+                Tables\Columns\TextColumn::make('pay_day')
+                    ->label('Data pagamento')
+                    ->dateTime('d/m/Y'),
+                Tables\Columns\TextColumn::make('value')
+                    ->label('Valor')
+                    ->formatStateUsing(fn(string $state): string => 'R$ ' . $state),
             ])
             ->filters([
                 //

@@ -17,7 +17,11 @@ class ExpenseTotalMonthCurrentWidget extends BaseWidget
     {
         $monthCurrent = MonthHelper::getMonthCurrent();
 
-        $expensesTotalMonth = FormatCurrency::getFormatCurrency(Expense::where('user_id', Auth::user()->id)->whereYear('pay_day', Carbon::now()->year)->whereMonth('pay_day', Carbon::now()->month)->sum('value'));
+        $expensesTotalMonth = FormatCurrency::getFormatCurrency(Expense::where('user_id', Auth::user()->id)
+            ->whereYear('pay_day', Carbon::now()->year)
+            ->whereMonth('pay_day', Carbon::now()->month)
+            ->where('status', 'pago')
+            ->sum('value'));
 
         return [
             Stat::make($monthCurrent, $expensesTotalMonth)

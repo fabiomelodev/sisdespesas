@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use App\Models\Category;
 
 class Expense extends Model
 {
@@ -20,13 +22,13 @@ class Expense extends Model
         'pay_day'      => 'datetime',
         'due_date'     => 'datetime',
         'created_at'   => 'datetime',
-        'items_credit' => 'array'
+        'pay_in'       => 'datetime'
     ];
 
     protected static function booted(): void
     {
         static::creating(function ($expense) {
-            $expense->user_id = Auth::user()->id;
+            $expense->user_id = 1;
 
             if ($expense->type == 'inconstante') {
                 $expense->status = 'pago';
@@ -34,7 +36,7 @@ class Expense extends Model
         });
 
         static::updating(function ($expense) {
-            $expense->user_id = Auth::user()->id;
+            $expense->user_id = 1;
 
             if ($expense->type == 'inconstante') {
                 $expense->status = 'pago';
@@ -165,13 +167,35 @@ class Expense extends Model
         return FormatCurrency::getFormatCurrency(array_sum($values));
     }
 
+    public static function getMetaMonthCurrent()
+    {
+        $uberMonthCurrent = Expense::whereRelation('category', 'slug', 'uber')->where('user_id', Auth::user()->id)->whereYear('pay_day', Carbon::now()->year)->whereMonth('pay_day', Carbon::now()->month);
+
+        $meta = Meta::whereHas('category', function ($query) {
+            $query->where('slug', 'uber');
+        })->where('year', Carbon::now()->year)
+            ->where('month', Carbon::now()->month)
+            ->first();
+
+        return $meta;
+    }
+
     public function bank(): BelongsTo
     {
         return $this->belongsTo(Bank::class);
     }
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function meanPayment(): BelongsTo
+    {
+        return $this->belongsTo(MeanPayment::class);
+    }
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
     }
 }

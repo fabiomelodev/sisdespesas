@@ -18,6 +18,7 @@ class ListUbers extends ListRecords
         ];
     }
 
+
     public function getHeaderWidgetsColumns(): int | array
     {
         return 2;
@@ -28,8 +29,8 @@ class ListUbers extends ListRecords
         return [
             // UberChartPieWidget::make(),
             UberMetaWidget::make(),
-            UberTotalFilterWidget::make(),
-            UberChartLineWidget::make(),
+            // UberTotalFilterWidget::make(),
+            // UberChartLineWidget::make(),
         ];
     }
 }

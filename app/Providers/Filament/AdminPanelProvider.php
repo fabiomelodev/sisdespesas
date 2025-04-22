@@ -74,12 +74,32 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label(fn(): string => __('Configurações'))
-                    ->icon('heroicon-s-cog-8-tooth')
+                    ->label(fn(): string => __('Geral'))
+                    ->icon('heroicon-m-chart-pie')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label(fn(): string => __('Despesas e Entradas'))
                     ->icon('heroicon-m-chart-pie')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(fn(): string => __('Créditos'))
+                    ->icon('heroicon-m-chart-pie')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(fn(): string => __('Investimentos'))
+                    ->icon('heroicon-m-chart-pie')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(fn(): string => __('Relatórios'))
+                    ->icon('heroicon-m-chart-pie')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(fn(): string => __('Ferramentas'))
+                    ->icon('heroicon-m-chart-pie')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(fn(): string => __('Configurações'))
+                    ->icon('heroicon-s-cog-8-tooth')
                     ->collapsed(),
             ]);
     }

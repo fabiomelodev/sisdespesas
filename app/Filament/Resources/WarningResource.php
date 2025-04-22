@@ -6,6 +6,7 @@ use App\Filament\Resources\WarningResource\Pages;
 use App\Filament\Resources\WarningResource\RelationManagers;
 use App\Models\Warning;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -26,7 +27,12 @@ class WarningResource extends Resource
 
     protected static ?string $navigationGroup = 'Avisos';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Geral');
+    }
 
     public static function form(Form $form): Form
     {
@@ -47,7 +53,13 @@ class WarningResource extends Resource
                             ->options([
                                 0 => 'Inativo',
                                 1 => 'Ativo'
-                            ])
+                            ]),
+                        DatePicker::make('date_current')
+                            ->label('Data atual'),
+                        DatePicker::make('created_at')
+                            ->label('Criado em')
+                            ->disabled()
+                            ->hiddenOn('create')
                     ])
 
             ]);
@@ -61,12 +73,12 @@ class WarningResource extends Resource
                     ->label('Aviso'),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
                         '0' => 'Inativo',
                         '1' => 'Ativo'
                     }),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Registrado em')
+                    ->label('Criado em')
                     ->dateTime('d/m/Y')
             ])->defaultSort('created_at', 'desc')
             ->filters([

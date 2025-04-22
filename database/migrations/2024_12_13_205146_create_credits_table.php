@@ -3,6 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Bank;
+use App\Models\CardCredit;
+use App\Models\User;
 
 return new class extends Migration
 {
@@ -13,6 +16,15 @@ return new class extends Migration
     {
         Schema::create('credits', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->string('slug');
+            $table->string('value');
+            $table->dateTime('pay_day');
+            $table->string('type');
+            $table->string('current_pensionem')->nullable();
+            $table->string('number_installments')->nullable();
+            $table->foreignIdFor(CardCredit::class);
+            $table->foreignIdFor(User::class);
             $table->timestamps();
         });
     }

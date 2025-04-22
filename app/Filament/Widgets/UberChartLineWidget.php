@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
+use App\Models\Expense;
 use App\Models\Uber;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
@@ -15,6 +16,13 @@ class UberChartLineWidget extends ChartWidget
 
     public ?string $filter = 'year';
 
+    protected int | string | array $columnSpan = 'full';
+
+    protected function getColumns(): int
+    {
+        return 1;
+    }
+
     protected function getData(): array
     {
         $activeFilter = $this->filter;
@@ -22,12 +30,13 @@ class UberChartLineWidget extends ChartWidget
         $collection = Uber::when($activeFilter == 'today', fn(Builder $query) => $query->whereDate('pay_day', Carbon::now()->format('Y-m-d')))
             ->when($activeFilter == 'week', fn(Builder $query) => $query->whereBetween('pay_day', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()]))
             ->when($activeFilter == 'month', fn(Builder $query) => $query->whereMonth('pay_day', Carbon::now()))
-            ->when($activeFilter == 'year', fn(Builder $query) => $query->whereYear('pay_day', Carbon::now()));
+            ->when($activeFilter == 'year', fn(Builder $query) => $query->whereYear('pay_day', Carbon::now()))
+            ->when($activeFilter == 'last_year', fn(Builder $query) => $query->whereYear('pay_day', Carbon::now()->subYear()));
 
         $data = Trend::query($collection)
             ->between(
-                start: now()->startOfYear(),
-                end: now()->endOfYear(),
+                start: $activeFilter != 'last_year' ? now()->startOfYear() : now()->subYear()->startOfYear(),
+                end: $activeFilter != 'last_year' ? now()->endOfYear() : now()->subYear()->endOfYear(),
             )
             ->dateColumn('pay_day')
             ->perMonth()
@@ -48,10 +57,11 @@ class UberChartLineWidget extends ChartWidget
     protected function getFilters(): ?array
     {
         return [
-            'today' => 'Hoje',
-            'year'  => 'Esse ano',
-            'week'  => 'Última semana',
-            'month' => 'Úlitmo mês',
+            'today'     => 'Hoje',
+            'year'      => 'Esse ano',
+            'week'      => 'Última semana',
+            'month'     => 'Úlitmo mês',
+            'last_year' => 'Ano passado'
         ];
     }
 

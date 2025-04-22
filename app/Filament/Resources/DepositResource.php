@@ -89,20 +89,21 @@ class DepositResource extends Resource
                     ->dateTime('d/m/Y'),
                 Tables\Columns\TextColumn::make('wage')
                     ->label('Salário')
-                    ->formatStateUsing(fn (string $state): string => 'R$ ' . number_format($state, 2, ',', '.')),
+                    ->formatStateUsing(fn(string $state): string => 'R$ ' . number_format($state, 2, ',', '.')),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
                         '0' => 'Pendente',
                         '1' => 'Concluído'
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         '0' => 'danger',
                         '1' => 'success'
                     }),
             ])->defaultSort('entry_date', 'desc')
             ->filters([
                 Filter::make('month')
+                    ->columnSpan(6)
                     ->form([
                         Select::make('month')
                             ->label('Mês')
@@ -126,13 +127,35 @@ class DepositResource extends Resource
                         return $query
                             ->when(
                                 $data['month'],
-                                fn (Builder $query, $date): Builder => $query->whereMonth('entry_date', $date),
+                                fn(Builder $query, $date): Builder => $query->whereMonth('entry_date', $date),
+                            );
+                    }),
+                Filter::make('year')
+                    ->columnSpan(6)
+                    ->form([
+                        Select::make('year')
+                            ->label('Ano')
+                            ->options([
+                                '2023' => '2023',
+                                '2024' => '2024',
+                                '2025' => '2025',
+                                '2026' => '2026'
+                            ])
+                            ->default(date('Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['year'],
+                                fn(Builder $query, $date): Builder => $query->whereYear('entry_date', $date),
                             );
                     }),
                 SelectFilter::make('bank_id')
                     ->label('Banco')
-                    ->relationship('bank', 'title', fn (Builder $query) => $query->where('user_id', Auth::user()->id))
+                    ->columnSpan('full')
+                    ->relationship('bank', 'title', fn(Builder $query) => $query->where('user_id', Auth::user()->id))
             ])
+            ->filtersFormColumns(12)
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])

@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Helpers\FormatCurrency;
+use App\Models\Expense;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Carbon\Carbon;
@@ -14,7 +15,7 @@ class UberTotalFilterWidget extends BaseWidget
     {
         $monthlyTotal = Uber::whereYear('pay_day', Carbon::now()->year)->whereMonth('pay_day', Carbon::now()->month)->sum('value');
 
-        $monthlyTotalPrev = Uber::whereYear('pay_day', Carbon::now()->year)->whereMonth('pay_day', Carbon::now()->month - 1)->sum('value');
+        $monthlyTotalPrev = Uber::whereYear('pay_day', Carbon::now()->subYear())->whereMonth('pay_day', Carbon::now()->subMonth())->sum('value');
 
         $uberAnnual = Uber::whereYear('pay_day', Carbon::now()->year);
 

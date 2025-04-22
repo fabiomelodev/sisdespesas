@@ -27,7 +27,12 @@ class MetaResource extends Resource
 {
     protected static ?string $model = Meta::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 3;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Geral');
+    }
 
     public static function form(Form $form): Form
     {
@@ -40,13 +45,13 @@ class MetaResource extends Resource
                     ->schema([
                         Select::make('category_id')
                             ->label('Categoria')
-                            ->relationship('category', 'title', fn (Builder $query) => $query->where('user_id', Auth::user()->id))
+                            ->relationship('category', 'title', fn(Builder $query) => $query->where('user_id', Auth::user()->id))
                             ->required()
-                            ->columnSpan(6),
+                            ->columnSpan('full'),
                         TextInput::make('value')
                             ->label('Valor')
                             ->prefix('R$')
-                            ->columnSpan(6)
+                            ->columnSpan('full')
                             ->required()
                     ]),
                 Section::make()
@@ -61,8 +66,9 @@ class MetaResource extends Resource
                             ->default(Carbon::now()->year)
                             ->required()
                             ->options([
-                                '2023' => '2024',
-                                '2024' => '2024'
+                                '2023' => '2023',
+                                '2024' => '2024',
+                                '2025' => '2025'
                             ])
                     ])
             ]);
@@ -101,12 +107,13 @@ class MetaResource extends Resource
                             ->orderBy('title', 'asc')
                             ->first();
 
-                        return FormatCurrency::getFormatCurrency($record->value) . ' / ' . FormatCurrency::getFormatCurrency($expenseCategory->total);
+                        return FormatCurrency::getFormatCurrency($expenseCategory->total) . ' / ' . FormatCurrency::getFormatCurrency($record->value);
                     }),
                 Tables\Columns\TextColumn::make('month')
-                    ->label('Data')
-                    ->formatStateUsing(fn (Meta $record): string => MonthHelper::getMonth($record->month) . ' de ' . $record->year)
+                    ->label('Mês / Ano')
+                    ->formatStateUsing(fn(Meta $record): string => MonthHelper::getMonth($record->month) . ' de ' . $record->year)
             ])
+            ->defaultSort('month', 'asc')
             ->filters([
                 //
             ])

@@ -49,6 +49,15 @@ class Uber extends Model
         return $meta;
     }
 
+    public static function getMetaByDate($month, $year)
+    {
+        return Meta::whereHas('category', function ($query) {
+            $query->where('slug', 'uber');
+        })->where('year', $year)
+            ->where('month', $month)
+            ->first();
+    }
+
     public function bank(): BelongsTo
     {
         return $this->belongsTo(Bank::class);

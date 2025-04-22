@@ -26,7 +26,12 @@ class EstimatedResource extends Resource
 
     protected static ?string $pluralLabel = 'Estimativas';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 2;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Geral');
+    }
 
     public static function form(Form $form): Form
     {
@@ -38,9 +43,11 @@ class EstimatedResource extends Resource
                     ->schema([
                         Select::make('month')
                             ->label('Mês')
+                            ->required()
                             ->options(MonthHelper::getMonths()),
                         Select::make('year')
                             ->label('Ano')
+                            ->required()
                             ->options([
                                 '2024' => '2024',
                                 '2025' => '2025'

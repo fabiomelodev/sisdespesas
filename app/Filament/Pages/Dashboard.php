@@ -28,7 +28,6 @@ class Dashboard extends Page
     protected function getHeaderWidgets(): array
     {
         return [
-            WarningWidget::make(),
             ControlOverview::make([
                 'status' => 'active',
             ]),

@@ -22,11 +22,9 @@ class RouteResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
     public static function getNavigationGroup(): ?string
     {
-        return __('Despesas e Entradas');
+        return __('Configurações');
     }
 
     public static function form(Form $form): Form

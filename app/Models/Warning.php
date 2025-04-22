@@ -12,6 +12,10 @@ class Warning extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'date_current' => 'datetime'
+    ];
+
     protected static function booted(): void
     {
         static::creating(function ($model) {

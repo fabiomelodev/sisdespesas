@@ -7,7 +7,7 @@ use App\Helpers\MonthHelper;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Carbon\Carbon;
-use App\Models\{Category, Meta, Uber};
+use App\Models\{Category, Expense, Meta, Uber};
 use Illuminate\Support\Facades\Auth;
 
 class UberMetaWidget extends BaseWidget
@@ -29,8 +29,13 @@ class UberMetaWidget extends BaseWidget
 
         $monthCurrent = MonthHelper::getMonthCurrent();
 
-        return [
-            Stat::make('Meta - ' . $monthCurrent, FormatCurrency::getFormatCurrency($uberMonthCurrent->sum('value')) . ' / ' . FormatCurrency::getFormatCurrency($meta->value))
-        ];
+        if (isset($meta)) {
+            return [
+                Stat::make('Meta - ' . $monthCurrent, FormatCurrency::getFormatCurrency($uberMonthCurrent->sum('value')) . ' / ' . FormatCurrency::getFormatCurrency($meta->value))
+                    ->description(intval($uberMonthCurrent->sum('value')) > intval($meta->value) ? 'Ultrapassou ' . FormatCurrency::getFormatCurrency((string) intval($uberMonthCurrent->sum('value')) - intval($meta->value)) : '')
+            ];
+        }
+
+        return [];
     }
 }
