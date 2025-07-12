@@ -305,7 +305,7 @@
                 <div class="grid grid-cols-12 gap-4">
 
                     <div class="col-span-3 border-2 border-white/50 rounded-lg shadow-lg flex gap-x-2 bg-black py-6 px-2">
-                        <img class="w-10 h-10" style="filter: invert(1)" src="{{ Vite::asset('public/images/icon-calendar.png')}}" alt="Ícone calendário - SIS Despesas" />
+                        <img class="w-10 h-10" style="filter: invert(1)" src="{{ asset('images/icon-calendar.png')}}" alt="Ícone calendário - SIS Despesas" />
 
                         <div>
                             <p class="text-sm font-semibold text-white/50">
@@ -323,7 +323,7 @@
                     </div>
 
                     <div class="col-span-3 border-2 border-white/50 rounded-lg shadow-lg flex gap-x-2 bg-black py-6 px-2">
-                        <img class="w-10 h-10" style="filter: invert(1)" src="{{ Vite::asset('public/images/icon-calendar.png')}}" alt="Ícone calendário - SIS Despesas" />
+                        <img class="w-10 h-10" style="filter: invert(1)" src="{{ asset('images/icon-calendar.png')}}" alt="Ícone calendário - SIS Despesas" />
 
                         <div>
                             <p class="text-sm font-semibold text-white/50">
@@ -341,7 +341,7 @@
                     </div>
 
                     <div class="col-span-3 border-2 border-white/50 rounded-lg shadow-lg flex gap-x-2 bg-black py-6 px-2">
-                        <img class="w-12 h-12" style="filter: invert(1)" src="{{ Vite::asset('public/images/icon-car.png')}}" alt="Ícone carro - SIS Despesas" />
+                        <img class="w-12 h-12" style="filter: invert(1)" src="{{ asset('images/icon-car.png')}}" alt="Ícone carro - SIS Despesas" />
 
                         <div>
                             <p class="text-sm font-semibold text-white/50">
@@ -359,7 +359,7 @@
                     </div>
 
                     <div class="col-span-3 border-2 border-white/50 rounded-lg shadow-lg flex gap-x-2 bg-black py-6 px-2">
-                        <img class="w-12 h-12" style="filter: invert(1)" src="{{ Vite::asset('public/images/icon-car.png')}}" alt="Ícone carro - SIS Despesas" />
+                        <img class="w-12 h-12" style="filter: invert(1)" src="{{ asset('images/icon-car.png')}}" alt="Ícone carro - SIS Despesas" />
 
                         <div>
                             <p class="text-sm font-semibold text-white/50">
