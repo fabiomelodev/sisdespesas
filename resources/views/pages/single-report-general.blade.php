@@ -22,7 +22,7 @@
                     </h2>
                 </div>
 
-                <div class="grid grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
                     <!-- loop -->
                     @foreach($banks as $bank)
@@ -74,7 +74,7 @@
                     </h2>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
                     <div class="flex flex-col gap-y-2">
 
@@ -169,9 +169,9 @@
                 <div class="grid grid-cols-1 gap-4">
                     <!-- loop -->
                     @foreach($cardCredits as $cardCredit)
-                        <div class="flex flex-wrap border-b-2 last:border-0 border-white/10 pb-4">
+                        <div class="flex flex-wrap gap-y-4 lg:gap-0 border-b-2 last:border-0 border-white/10 pb-4">
 
-                            <div class="w-1/3 pr-4">
+                            <div class="w-full lg:w-1/3 lg:pr-4">
                                 <div
                                     class="shadow-lg rounded-lg  p-6"
                                     style="background-color: {{ $cardCredit['bank_color'] }}">
@@ -207,7 +207,7 @@
                                 </div>
                             </div>
 
-                            <div class="w-2/3 pl-4">
+                            <div class="w-full lg:w-2/3 lg:pl-4">
 
                                 <div class="flex flex-wrap gap-2">
                                     <!-- loop -->
