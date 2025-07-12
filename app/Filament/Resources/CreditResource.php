@@ -36,61 +36,38 @@ class CreditResource extends Resource
         return $form
             ->columns(12)
             ->schema([
-                Wizard::make([
-                    Wizard\Step::make('Tipo')
-                        ->columns(2)
-                        ->schema([
-                            Select::make('type')
-                                ->label('Tipo')
-                                ->required()
-                                ->live()
-                                ->options([
-                                    'vista'     => 'À vista',
-                                    'parcelado' => 'Parcelado'
-                                ]),
-                            TextInput::make('number_installments')
-                                ->label('Quantidade de parcelas')
-                                ->numeric()
-                                ->hidden(fn(Get $get) => $get('type') == 'parcelado' ? false : true)
-                                ->required(fn(Get $get) => $get('type') == 'parcelado' ? true : false)
-                        ]),
-                    Wizard\Step::make('Crédito')
-                        ->columns(12)
-                        ->schema([
-                            Section::make()
-                                ->columnSpan(9)
-                                ->schema([
-                                    TextInput::make('title')
-                                        ->label('Título')
-                                        ->required(),
-                                    DatePicker::make('pay_day')
-                                        ->label('Data do pagamento')
-                                        ->displayFormat('d/m/Y')
-                                        ->required()
-                                ]),
-                            Section::make()
-                                ->columnSpan(3)
-                                ->schema([
-                                    TextInput::make('value')
-                                        ->label('Valor')
-                                        ->prefix('R$')
-                                        ->required(),
-                                    TextInput::make('current_pensionem')
-                                        ->label('Parcela atual')
-                                        ->numeric()
-                                        ->required()
-                                        ->default(1),
-                                    Select::make('invoice_id')
-                                        ->label('Fatura')
-                                        ->required()
-                                        ->relationship(
-                                            'invoice',
-                                            'title',
-                                            fn(Builder $query) => $query->where('user_id', Auth::user()->id)
-                                        )
-                                ])
-                        ]),
-                ])->columnSpan('full'),
+                Section::make()
+                    ->columnSpan(9)
+                    ->schema([
+                        TextInput::make('title')
+                            ->label('Título')
+                            ->required(),
+                        DatePicker::make('pay_day')
+                            ->label('Data do pagamento')
+                            ->displayFormat('d/m/Y')
+                            ->required()
+                    ]),
+                Section::make()
+                    ->columnSpan(3)
+                    ->schema([
+                        TextInput::make('value')
+                            ->label('Valor')
+                            ->prefix('R$')
+                            ->required(),
+                        Select::make('category_id')
+                            ->label('Categoria')
+                            ->placeholder('Selecionar')
+                            ->relationship('category', 'title')
+                            ->required(),
+                        Select::make('invoice_id')
+                            ->label('Fatura')
+                            ->required()
+                            ->relationship(
+                                'invoice',
+                                'title',
+                                fn(Builder $query) => $query->where('user_id', Auth::user()->id)
+                            )
+                    ])
             ]);
     }
 

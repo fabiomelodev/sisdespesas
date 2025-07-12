@@ -30,6 +30,13 @@ class DepositResource extends Resource
         return __('Despesas e Entradas');
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('entry_date', '>=', now()->startOfMonth())
+            ->where('entry_date', '<=', now()->endOfMonth())
+            ->count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form

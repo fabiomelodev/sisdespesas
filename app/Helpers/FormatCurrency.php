@@ -6,6 +6,10 @@ class FormatCurrency
 {
     public static function getFormatCurrency($value): string
     {
+        // if (str_contains($value, ',')) {
+        //     return 'R$ ' . $value;
+        // }
+
         return 'R$ ' . number_format((float) $value, 2, ',', '.');
     }
 

@@ -34,9 +34,7 @@ class Invoice extends Model
         });
 
         static::updating(function ($model) {
-            $slug = strip_tags($model->slug);
-
-            $model->slug = Str::slug($slug);
+            $model->slug = Str::slug($model->title);
 
             list($year, $month, $day) = explode('-', $model->due_date);
 
@@ -48,18 +46,9 @@ class Invoice extends Model
 
             $model->user_id = Auth::user()->id;
 
-            // $model->value = $model->credits()->sum('value');
-
-            $model->value = $model->expenses()->sum('value');
+            $model->value = $model->credits()->sum('value');
         });
     }
-
-    // public function title(): Attribute
-    // {
-    //     return Attribute::make(
-    //         get: fn() => $this->title . ' - ' . $this->cardCredit()->first()->title,
-    //     );
-    // }
 
     public function cardCredit(): BelongsTo
     {

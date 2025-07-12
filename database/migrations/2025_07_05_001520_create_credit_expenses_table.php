@@ -1,7 +1,8 @@
 <?php
 
+use App\Models\Bank;
 use App\Models\Category;
-use App\Models\MeanPayment;
+use App\Models\Invoice;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,17 +14,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fixeds', function (Blueprint $table) {
+        Schema::create('credit_expenses', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('slug');
-            $table->string('type');
-            $table->string('number_installments')->nullable();
             $table->string('value');
-            $table->string('due_date');
-            $table->string('status');
+            $table->date('pay_day');
+            $table->foreignIdFor(Bank::class);
             $table->foreignIdFor(Category::class);
-            $table->foreignIdFor(MeanPayment::class);
+            $table->foreignIdFor(Invoice::class);
             $table->timestamps();
         });
     }
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fixeds');
+        Schema::dropIfExists('credit_expenses');
     }
 };

@@ -14,48 +14,32 @@ class Credit extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'pay_day' => 'datetime',
+    ];
+
     protected static function booted(): void
     {
         static::creating(function ($model) {
-            $model->slug = Str::slug($model->title);
-            $model->user_id = Auth::user()->id;
+            $value = $model->value =  str_replace(',', '.', $model->value);
 
-            $number_installments = $model->number_installments;
-
-            if ($model->type == 'parcelado') {
-                for ($i = 2; $i <= $model->number_installments; $i++) {
-                    $credit = Credit::create([
-                        'title'               => $model->title,
-                        'slug'                => $model->slug,
-                        'value'               => $model->value,
-                        'pay_day'             => $model->pay_day,
-                        'type'                => $model->type,
-                        'current_pensionem'   => $i,
-                        'invoice_id'          => (int) $model->invoice_id,
-                        'user_id'             => $model->user_id,
-                    ]);
-
-                    $credit->number_installments = $model->number_installments;
-
-                    $credit->save();
-                }
-            }
+            $model->value = (float) $value;
         });
 
         static::updating(function ($model) {
-            $slug = strip_tags($model->slug);
-            $model->slug = Str::slug($slug);
-            $model->user_id = Auth::user()->id;
+            $value = $model->value =  str_replace(',', '.', $model->value);
+
+            $model->value = (float) $value;
         });
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

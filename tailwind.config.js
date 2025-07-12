@@ -20,6 +20,10 @@ export default {
     safelist: ["bg-red-500"],
     darkMode: "class",
     theme: {
+        container: {
+            center: true,
+            padding: "1rem",
+        },
         extend: {
             colors: {
                 danger: colors.rose,

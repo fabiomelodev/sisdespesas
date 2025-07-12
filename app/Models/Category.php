@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -66,9 +67,30 @@ class Category extends Model
             ->first();
     }
 
-    public function expenses(): HasMany
+    public static function getTotalCategoriesImmediateExpensesCurrentMonth($month, $year)
     {
-        return $this->hasMany(Expense::class);
+        return ImmediateExpense::join('categories', 'immediate_expenses.category_id', '=', 'categories.id')
+            ->selectRaw('categories.title, SUM(immediate_expenses.value) as total')
+            ->selectRaw('categories.id as category_id')
+            ->whereHas('meanPayment', fn(Builder $query) => $query->whereNot('slug', 'credito'))
+            ->when($month != null, function (Builder $query) use ($month, $year) {
+                return $query->whereMonth('immediate_expenses.pay_day', $month);
+            })->groupBy('categories.id')
+            ->when($month != null, function (Builder $query) use ($month, $year) {
+                return $query->whereYear('immediate_expenses.pay_day', $year);
+            })->groupBy('categories.id')
+            ->orderBy('title', 'asc')
+            ->get();
+    }
+
+    public function credits(): HasMany
+    {
+        return $this->hasMany(Credit::class);
+    }
+
+    public function immediateExpenses(): HasMany
+    {
+        return $this->hasMany(ImmediateExpense::class);
     }
 
     public function ubers(): HasMany

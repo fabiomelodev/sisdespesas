@@ -17,14 +17,9 @@ return new class extends Migration
         Schema::create('credits', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('slug');
             $table->string('value');
             $table->dateTime('pay_day');
-            $table->string('type');
-            $table->string('current_pensionem')->nullable();
-            $table->string('number_installments')->nullable();
             $table->foreignIdFor(CardCredit::class);
-            $table->foreignIdFor(User::class);
             $table->timestamps();
         });
     }

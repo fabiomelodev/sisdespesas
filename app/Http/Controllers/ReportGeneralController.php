@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Helpers\FormatCurrency;
 use App\Helpers\MonthHelper;
 use App\Models\Bank;
+use App\Models\CardCredit;
+use App\Models\Category;
 use App\Models\Expense;
+use App\Models\ImmediateExpense;
 use App\Models\Meta;
 use App\Models\ReportGeneral;
 use App\Models\Uber;
@@ -48,103 +51,21 @@ class ReportGeneralController extends Controller
     {
         $dateCurrent = MonthHelper::getMonth($reportGeneral->month) . ' / ' . $reportGeneral->year;
 
-        $banks = Bank::get()
-            ->map(function ($bank) use ($reportGeneral) {
-                $expensesTotalValue = $bank->expenses()
-                    ->whereHas('meanPayment', fn(Builder $query) => $query->whereNot('slug', 'credito'))
-                    ->where('status', 'pago')
-                    ->whereMonth('pay_day', $reportGeneral->month)
-                    ->whereYear('pay_day', $reportGeneral->year)
-                    ->sum('value');
+        $banks = Bank::getTotalBankValueCurrentMonth($reportGeneral->month, $reportGeneral->year);
 
-                $ubersTotalValue = $bank->ubers()
-                    ->whereMonth('pay_day', $reportGeneral->month)
-                    ->whereYear('pay_day', $reportGeneral->year)
-                    ->sum('value');
-
-                $expenses = $expensesTotalValue + $ubersTotalValue;
-
-                $depositsTotalValue = $bank->deposits()
-                    ->where('status', 1)
-                    ->whereMonth('entry_date', $reportGeneral->month)
-                    ->whereYear('entry_date', $reportGeneral->year)
-                    ->sum('wage');
-
-                $remainingTotalValue = $depositsTotalValue - $expenses;
-
-                return [
-                    'title'     => $bank->title,
-                    'icon'      => $bank->icon_bank,
-                    'color'     => $bank->color,
-                    'deposits'  => FormatCurrency::getFormatCurrency($depositsTotalValue),
-                    'expenses'  => FormatCurrency::getFormatCurrency($expenses),
-                    'remaining' => FormatCurrency::getFormatCurrency($remainingTotalValue)
-                ];
-            });
-
-        $expensesFixedPeding = Expense::whereMonth('pay_in', $reportGeneral->month)
-            ->whereYear('pay_in', $reportGeneral->year)
-            ->whereHas('meanPayment', fn(Builder $query) => $query->whereNot('slug', 'credito'))
-            ->where('type', 'fixo')
-            ->where('status', 'pendente')
-            ->get();
+        $expensesFixedPeding = ImmediateExpense::getExpensesFixedPedingCurrentMonth($reportGeneral->month, $reportGeneral->year);
 
         $expensesFixedPedingTotalValues = $expensesFixedPeding->sum(fn($expense) => is_numeric($expense->value) ? (float) $expense->value : 0);
 
-        $expensesFixedPaid = Expense::whereMonth('pay_in', $reportGeneral->month)
-            ->whereYear('pay_in', $reportGeneral->year)
-            ->whereHas('meanPayment', fn(Builder $query) => $query->whereNot('slug', 'credito'))
-            ->where('type', 'fixo')
-            ->where('status', 'pago')
-            ->get();
+        $expensesFixedPaid = ImmediateExpense::getExpensesFixedPaidCurrentMonth($reportGeneral->month, $reportGeneral->year);
 
         $expensesFixedPaidTotalValues = $expensesFixedPaid->sum(fn($expense) => (float) $expense->value);
 
-        $expensesCategories = Expense::join('categories', 'expenses.category_id', '=', 'categories.id')
-            ->selectRaw('categories.title, SUM(expenses.value) as total')
-            ->selectRaw('categories.id as category_id')
-            ->whereHas('meanPayment', fn(Builder $query) => $query->whereNot('slug', 'credito'))
-            ->when($reportGeneral->month != null, function (Builder $query) use ($reportGeneral) {
-                return $query->whereMonth('expenses.pay_day', $reportGeneral->month);
-            })->groupBy('categories.id')
-            ->when($reportGeneral->month != null, function (Builder $query) use ($reportGeneral) {
-                return $query->whereYear('expenses.pay_day', $reportGeneral->year);
-            })->groupBy('categories.id')
-            ->where('expenses.user_id', Auth::user()->id)
-            ->orderBy('title', 'asc')
-            ->get();
+        $expensesCategories = Category::getTotalCategoriesImmediateExpensesCurrentMonth($reportGeneral->month, $reportGeneral->year);
 
-        $metas = Meta::where('month', $reportGeneral->month)
-            ->where('year', $reportGeneral->year)
-            ->get()
-            ->map(function ($meta) use ($reportGeneral) {
-                if ($meta->category()->first()->slug == 'uber') {
-                    $expensesValue = $meta->category()
-                        ->first()
-                        ->ubers()
-                        ->whereMonth('pay_day', $reportGeneral->month)
-                        ->whereYear('pay_day', $reportGeneral->year)->sum('value');
-                } else {
-                    $expensesValue = $meta->category()
-                        ->first()
-                        ->expenses()
-                        ->whereHas('meanPayment', fn(Builder $query) => $query->whereNot('slug', 'credito'))
-                        ->whereMonth('pay_day', $reportGeneral->month)
-                        ->whereYear('pay_day', $reportGeneral->year)
-                        ->sum('value');
-                }
+        $cardCredits = CardCredit::getCardCreditsTotalCurrentMonth($reportGeneral->month, $reportGeneral->year);;
 
-                $category = $meta->category()->first();
-
-                $percentage = FormatCurrency::getFormatValuePercentage($expensesValue, $meta->value);
-
-                return [
-                    'title'      => $category->title,
-                    'value'      => FormatCurrency::getFormatCurrency($expensesValue),
-                    'meta'       => FormatCurrency::getFormatCurrency($meta->value),
-                    'percentage' => $percentage
-                ];
-            });
+        $metas = Meta::getMetasByCategoryCurrentMonth($reportGeneral->month, $reportGeneral->year);
 
         $ubersYearCurrent = Uber::whereYear('pay_day', $reportGeneral->year)->get();
 
@@ -186,6 +107,7 @@ class ReportGeneralController extends Controller
             ->get();
 
         return view('pages.single-report-general', [
+            'reportGeneral'                  => $reportGeneral,
             'dateCurrent'                    => $dateCurrent,
             'banks'                          => $banks,
             'expensesFixedPeding'            => $expensesFixedPeding,
@@ -193,6 +115,7 @@ class ReportGeneralController extends Controller
             'expensesFixedPaid'              => $expensesFixedPaid,
             'expensesFixedPaidTotalValues'   => $expensesFixedPaidTotalValues,
             'expensesCategories'             => $expensesCategories,
+            'cardCredits'                    => $cardCredits,
             'metas'                          => $metas,
             'ubersYearCurrentTotalValue'     => $ubersYearCurrentTotalValue,
             'ubersYearCurrentQty'            => $ubersYearCurrentQty,

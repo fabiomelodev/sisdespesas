@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Helpers\FormatCurrency;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,9 +30,47 @@ class Bank extends Model
         });
     }
 
-    public function expenses(): HasMany
+    public static function getTotalBankValueCurrentMonth($month, $year)
     {
-        return $this->hasMany(Expense::class);
+        return Bank::get()
+            ->map(function ($bank) use ($month, $year) {
+                $expenses = $bank->immediateExpenses()
+                    ->whereHas('meanPayment', fn(Builder $query) => $query->whereNot('slug', 'credito'))
+                    ->where('status', 'pago')
+                    ->whereMonth('pay_day', $month)
+                    ->whereYear('pay_day', $year);
+
+                $expensesTotalValue = $expenses->sum('value');
+
+                $ubersTotalValue = $bank->ubers()
+                    ->whereMonth('pay_day', $month)
+                    ->whereYear('pay_day', $year)
+                    ->sum('value');
+
+                $expenses = $expensesTotalValue + $ubersTotalValue;
+
+                $depositsTotalValue = $bank->deposits()
+                    ->where('status', 1)
+                    ->whereMonth('entry_date', $month)
+                    ->whereYear('entry_date', $year)
+                    ->sum('wage');
+
+                $remainingTotalValue = $depositsTotalValue - $expenses;
+
+                return [
+                    'title'     => $bank->title,
+                    'icon'      => $bank->icon_bank,
+                    'color'     => $bank->color,
+                    'deposits'  => FormatCurrency::getFormatCurrency($depositsTotalValue),
+                    'expenses'  => FormatCurrency::getFormatCurrency($expenses),
+                    'remaining' => FormatCurrency::getFormatCurrency($remainingTotalValue)
+                ];
+            });
+    }
+
+    public function immediateExpenses(): HasMany
+    {
+        return $this->hasMany(ImmediateExpense::class);
     }
 
     public function deposits(): HasMany

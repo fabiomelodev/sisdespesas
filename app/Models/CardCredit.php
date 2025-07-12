@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\FormatCurrency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,6 +28,43 @@ class CardCredit extends Model
             $model->slug = Str::slug($slug);
             $model->user_id = Auth::user()->id;
         });
+    }
+
+    public static function getCardCreditsTotalCurrentMonth($month, $year)
+    {
+        return self::with('bank', 'invoices.credits')
+            ->get()
+            ->map(function ($cardCredit) use ($month, $year) {
+                $bank = $cardCredit->bank;
+
+                $invoice = $cardCredit->invoices()
+                    ->whereMonth('referential_date', $month)
+                    ->whereYear('referential_date', $year)
+                    ->first();
+
+                $creditsTotal = 0;
+
+                if ($invoice) {
+                    $creditsTotal = optional($invoice)->credits()?->sum('value');
+                }
+
+                $limit = $cardCredit->value - $creditsTotal;
+
+                $credits = $invoice->credits()
+                    ->orderBy('pay_day', 'desc')
+                    ->get();
+
+                return [
+                    'title'        => $cardCredit->title,
+                    'limit'        => FormatCurrency::getFormatCurrency($limit),
+                    'bank_title'   => $bank->title,
+                    'bank_icon'    => $bank->icon_bank,
+                    'bank_color'   => $bank->color,
+                    'creditsTotal' => FormatCurrency::getFormatCurrency($creditsTotal),
+                    'status'       => $invoice->status,
+                    'credits'      => $credits
+                ];
+            });
     }
 
     public function bank(): BelongsTo

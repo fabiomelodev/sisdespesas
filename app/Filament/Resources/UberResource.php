@@ -27,11 +27,6 @@ class UberResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    public static function getPluralLabel(): ?string
-    {
-        return 'Uber - ' . MonthHelper::getMonth(Carbon::now()->month);
-    }
-
     public static function getNavigationGroup(): ?string
     {
         return __('Despesas e Entradas');
@@ -39,7 +34,9 @@ class UberResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::where('pay_day', '>=', now()->startOfMonth())
+            ->where('pay_day', '<=', now()->endOfMonth())
+            ->count();
     }
 
     public static function form(Form $form): Form

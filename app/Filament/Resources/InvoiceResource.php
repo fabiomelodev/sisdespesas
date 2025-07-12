@@ -46,6 +46,9 @@ class InvoiceResource extends Resource
                             ->label('Título')
                             ->disabled()
                             ->hiddenOn('create'),
+                        DatePicker::make('referential_date')
+                            ->label('Data de referência')
+                            ->required(),
                         DatePicker::make('due_date')
                             ->label('Data de vencimento')
                             ->required()
@@ -117,7 +120,7 @@ class InvoiceResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\CreditsRelationManager::class,
         ];
     }
 

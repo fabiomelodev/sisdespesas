@@ -2,35 +2,29 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ExpenseResource\Pages;
-use App\Filament\Resources\ExpenseResource\RelationManagers;
+use App\Filament\Resources\CreditExpenseResource\Pages;
+use App\Filament\Resources\CreditExpenseResource\RelationManagers;
 use App\Helpers\FormatCurrency;
-use App\Helpers\MonthHelper;
-use App\Models\Category;
-use App\Models\Expense;
-use Carbon\Carbon;
+use App\Models\CreditExpense;
 use Filament\Forms;
-use Filament\Forms\Components\{DatePicker, Repeater, Section, Select, TextInput, Wizard};
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Closure;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Support\Facades\Auth;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ExpenseResource extends Resource
+class CreditExpenseResource extends Resource
 {
-    protected static ?string $model = Expense::class;
+    protected static ?string $model = CreditExpense::class;
 
     protected static ?string $label = 'Despesa';
 
@@ -40,7 +34,7 @@ class ExpenseResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Despesas e Entradas');
+        return __('Créditos');
     }
 
     public static function getNavigationBadge(): ?string
@@ -55,56 +49,17 @@ class ExpenseResource extends Resource
             ->schema([
                 Section::make()
                     ->columnSpan(9)
-                    ->columns(12)
                     ->schema([
-                        Select::make('type')
-                            ->label('Tipo')
-                            ->default('inconstante')
-                            ->required()
-                            ->reactive()
-                            ->columnSpan('full')
-                            ->options([
-                                'inconstante' => 'Inconstante',
-                                'fixo'       => 'Fixo',
-                            ]),
                         TextInput::make('title')
                             ->label('Título')
                             ->required()
+                            ->maxLength(255)
                             ->columnSpan('full'),
-                        Select::make('mean_payment_id')
-                            ->label('Meio de pagamento')
-                            ->placeholder('Selecionar')
-                            ->live()
-                            ->required(fn(Get $get) => $get('type') == 'inconstante' ?: false)
-                            ->columnSpan('full')
-                            ->relationship('meanPayment', 'title'),
-                        DatePicker::make('pay_in')
-                            ->label('Pagar em')
-                            ->displayFormat('d/m/Y')
-                            ->columnSpan('full')
-                            ->hidden(function (Get $get) {
-                                if ($get('type') == 'fixo') {
-                                    return false;
-                                }
-
-                                return true;
-                            }),
                         DatePicker::make('pay_day')
                             ->label('Data de pagamento')
                             ->displayFormat('d/m/Y')
-                            ->required(fn(Get $get) => $get('type') == 'inconstante' ?: false)
-                            ->columnSpan(6),
-                        DatePicker::make('due_date')
-                            ->label('Data de vencimento')
-                            ->displayFormat('d/m/Y')
+                            ->required()
                             ->columnSpan(6)
-                            ->hidden(function (Get $get) {
-                                if ($get('type') == 'fixo') {
-                                    return false;
-                                }
-
-                                return true;
-                            }),
                     ]),
                 Section::make()
                     ->columnSpan(3)
@@ -115,33 +70,17 @@ class ExpenseResource extends Resource
                             ->required(),
                         Select::make('invoice_id')
                             ->label('Fatura')
-                            ->relationship('invoice', 'title')
-                            ->hidden(fn(Get $get): bool => $get('mean_payment_id') != '2' ? true : false),
+                            ->relationship('invoice', 'title'),
                         Select::make('bank_id')
                             ->label('Banco')
-                            ->required(fn(Get $get) => $get('type') == 'inconstante' ?: false)
-                            ->relationship('bank', 'title', function (Builder $query) {
-                                $query->where('user_id', Auth::user()->id);
-                            }),
+                            ->required()
+                            ->relationship('bank', 'title'),
                         Select::make('category_id')
                             ->label('Categoria')
                             ->placeholder('Selecionar')
                             ->required()
                             ->reactive()
-                            ->relationship('category', 'title', fn(Builder $query) => $query->where('user_id', Auth::user()->id)),
-                        Select::make('status')
-                            ->default(0)
-                            ->options([
-                                'pendente' => 'Pendente',
-                                'pago'     => 'Pago',
-                            ])
-                            ->hidden(function (Get $get) {
-                                if ($get('type') == 'fixo') {
-                                    return false;
-                                }
-
-                                return true;
-                            })
+                            ->relationship('category', 'title'),
                     ])
             ]);
     }
@@ -156,24 +95,14 @@ class ExpenseResource extends Resource
                     ->label('Categoria'),
                 Tables\Columns\ImageColumn::make('bank.icon_bank')
                     ->label('Banco'),
-                Tables\Columns\TextColumn::make('meanPayment.title')
-                    ->label('Meio de pagamnto'),
+                Tables\Columns\TextColumn::make('invoice.title')
+                    ->label('Fatura'),
                 Tables\Columns\TextColumn::make('pay_day')
                     ->label('Data pago')
                     ->dateTime('d/m/y'),
                 Tables\Columns\TextColumn::make('value')
                     ->label('Valor')
                     ->formatStateUsing(fn(string $state): string => FormatCurrency::getFormatCurrency($state)),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'pendente' => 'Pendente',
-                        'pago'     => 'Pago'
-                    })
-                    ->color(fn(string $state): string => match ($state) {
-                        'pendente' => 'danger',
-                        'pago'     => 'success'
-                    })
             ])->defaultSort('pay_day', 'desc')
             ->filters([
                 Filter::make('month')
@@ -240,39 +169,21 @@ class ExpenseResource extends Resource
                                 fn(Builder $query, $date): Builder => $query->whereDate('pay_day', '<=', $date),
                             );
                     }),
-                SelectFilter::make('type')
-                    ->label('Tipo')
-                    ->columnSpan(3)
-                    ->options([
-                        'inconstante' => 'Inconstante',
-                        'fixo'       => 'Fixo'
-                    ]),
                 SelectFilter::make('category_id')
                     ->label('Categoria')
-                    ->relationship('category', 'title', fn(Builder $query) => $query->where('user_id', Auth::user()->id))
+                    ->relationship('category', 'title')
                     ->columnSpan(3),
                 SelectFilter::make('bank_id')
                     ->label('Banco')
-                    ->relationship('bank', 'title', fn(Builder $query) => $query->where('user_id', Auth::user()->id))
+                    ->relationship('bank', 'title')
                     ->columnSpan(3),
-                SelectFilter::make('status')
-                    ->columnSpan(3)
-                    ->options([
-                        'pendente' => 'Pendente',
-                        'pago'     => 'Pago',
-                    ]),
                 SelectFilter::make('invoice_id')
                     ->label('Fatura')
-                    ->relationship('invoice', 'title', fn(Builder $query) => $query->where('user_id', Auth::user()->id))
+                    ->relationship('invoice', 'title')
                     ->columnSpan(3),
             ], FiltersLayout::AboveContentCollapsible)
             ->filtersFormWidth(MaxWidth::ExtraLarge)
             ->filtersFormColumns(12)
-            ->heading(function (Table $table) {
-                $total = $table->getRecords()->sum('valor');
-
-                return 'Total: ' . number_format($total, 2, ',', '.');
-            })
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
@@ -282,25 +193,6 @@ class ExpenseResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getExpensesFixedPedingQuery(): Builder
-    {
-        return Expense::whereYear('due_date', Carbon::now()->year)
-            ->where('type', 'fixo')
-            ->where('status', 'pendente')
-            ->where('user_id', Auth::user()->id)
-            ->orderBy('due_date', 'desc');
-    }
-
-    public static function getExpensesFixedPaidQuery(): Builder
-    {
-        return Expense::whereYear('due_date', Carbon::now()->year)
-            ->whereMonth('due_date', Carbon::now()->month)
-            ->where('type', 'fixo')
-            ->where('status', 'pago')
-            ->where('user_id', Auth::user()->id)
-            ->orderBy('due_date', 'desc');
     }
 
     public static function getRelations(): array
@@ -313,9 +205,9 @@ class ExpenseResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListExpenses::route('/'),
-            'create' => Pages\CreateExpense::route('/create'),
-            'edit' => Pages\EditExpense::route('/{record}/edit'),
+            'index' => Pages\ListCreditExpenses::route('/'),
+            'create' => Pages\CreateCreditExpense::route('/create'),
+            'edit' => Pages\EditCreditExpense::route('/{record}/edit'),
         ];
     }
 }

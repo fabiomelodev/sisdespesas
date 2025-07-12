@@ -7,7 +7,7 @@
         <title>Despesas</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?ver=1.1">
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?ver=1.1">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?ver=1.1">
@@ -17,7 +17,7 @@
         <link rel="canonical" href="{{  url()->current() }}" />
         @vite('resources/js/app.js')
     </head>
-    <body>
+    <body class="bg-gray-800">
         <style>
             [x-cloak] {
                 display: none;

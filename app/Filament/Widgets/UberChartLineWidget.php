@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UberChartLineWidget extends ChartWidget
 {
-    protected static ?string $heading = 'Gastos mensal';
+    protected static ?string $heading = 'Gastos mensal a';
 
     public ?string $filter = 'year';
 

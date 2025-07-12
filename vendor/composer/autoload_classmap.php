@@ -131,6 +131,7 @@ return array(
     'App\\Http\\Middleware\\ValidateSignature' => $baseDir . '/app/Http/Middleware/ValidateSignature.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Livewire\\PanelCategories' => $baseDir . '/app/Livewire/PanelCategories.php',
+    'App\\Livewire\\ReportCategories' => $baseDir . '/app/Livewire/ReportCategories.php',
     'App\\Models\\Bank' => $baseDir . '/app/Models/Bank.php',
     'App\\Models\\CardCredit' => $baseDir . '/app/Models/CardCredit.php',
     'App\\Models\\Category' => $baseDir . '/app/Models/Category.php',
