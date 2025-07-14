@@ -10,7 +10,11 @@ use Filament\Forms\Components\{DatePicker, Section, Select, TextInput, Wizard};
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -37,7 +41,10 @@ class CreditResource extends Resource
             ->columns(12)
             ->schema([
                 Section::make()
-                    ->columnSpan(9)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 9,
+                    ])
                     ->schema([
                         TextInput::make('title')
                             ->label('Título')
@@ -48,7 +55,10 @@ class CreditResource extends Resource
                             ->required()
                     ]),
                 Section::make()
-                    ->columnSpan(3)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 3,
+                    ])
                     ->schema([
                         TextInput::make('value')
                             ->label('Valor')
@@ -76,30 +86,89 @@ class CreditResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Título'),
-                Tables\Columns\TextColumn::make('current_pensionem')
-                    ->label('Parcela')
-                    ->formatStateUsing(function (Credit $record) {
-                        if ($record->number_installments) {
-                            return $record->current_pensionem . '/' . $record->number_installments;
-                        }
-
-                        return $record->current_pensionem . '/' . $record->current_pensionem;
-                    })
-                    ->badge(),
+                    ->label('Título')
+                    ->formatStateUsing(fn(string $state): string => mb_strimwidth($state, 0, 40, '...')),
+                Tables\Columns\TextColumn::make('category.title')
+                    ->label('Categoria'),
                 Tables\Columns\TextColumn::make('invoice.title')
                     ->label('Fatura'),
-                // ->formatStateUsing(fn(Credit $record) => $record->invoice()->first()->title . ' - ' . $record->invoice()->first()->cardCredit()->first()->title),
                 Tables\Columns\TextColumn::make('pay_day')
                     ->label('Data pagamento')
                     ->dateTime('d/m/Y'),
                 Tables\Columns\TextColumn::make('value')
                     ->label('Valor')
                     ->formatStateUsing(fn(string $state): string => 'R$ ' . $state),
-            ])
+            ])->defaultSort('pay_day', 'desc')
             ->filters([
-                //
-            ])
+                Filter::make('month')
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 6
+                    ])
+                    ->columns([
+                        'default' => 2
+                    ])
+                    ->form([
+                        Select::make('month')
+                            ->label('Mês')
+                            ->columnSpan(1)
+                            ->options([
+                                '01' => 'Janeiro',
+                                '02' => 'Fevereiro',
+                                '03' => 'Março',
+                                '04' => 'Abril',
+                                '05' => 'Maio',
+                                '06' => 'Junho',
+                                '07' => 'Julho',
+                                '08' => 'Agosto',
+                                '09' => 'Setembro',
+                                '10' => 'Outubro',
+                                '11' => 'Novembro',
+                                '12' => 'Dezembro',
+                            ])
+                            ->default(date('m')),
+                        Select::make('year')
+                            ->label('Ano')
+                            ->columnSpan(1)
+                            ->options([
+                                '2024' => '2024',
+                                '2025' => '2025'
+                            ])
+                            ->default(date('Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['month'],
+                                fn(Builder $query, $month): Builder => $query->whereMonth('pay_day', $month),
+                            )
+                            ->when(
+                                $data['year'],
+                                fn(Builder $query, $year): Builder => $query->whereYear('pay_day', $year),
+                            );
+                    }),
+                SelectFilter::make('category_id')
+                    ->label('Categoria')
+                    ->placeholder('Selecionar')
+                    ->relationship('category', 'title')
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 3
+                    ]),
+                SelectFilter::make('invoice_id')
+                    ->label('Fatura')
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 3
+                    ])
+                    ->relationship(
+                        'invoice',
+                        'title',
+                        fn(Builder $query) => $query->where('user_id', Auth::user()->id)
+                    )
+            ], FiltersLayout::AboveContentCollapsible)
+            ->filtersFormWidth(MaxWidth::ExtraLarge)
+            ->filtersFormColumns(12)
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
