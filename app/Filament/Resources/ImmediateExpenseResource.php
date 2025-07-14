@@ -104,8 +104,12 @@ class ImmediateExpenseResource extends Resource
                             ->placeholder('Selecionar')
                             ->relationship('category', 'title')
                             ->required(),
-                        Toggle::make('status')
+                        Select::make('status')
                             ->label('Status')
+                            ->options([
+                                'pendente' => 'Pendente',
+                                'pago'     => 'Pago',
+                            ])
                             ->required()
                             ->hidden(fn(Get $get): bool => $get('type') === 'inscontante')
                             ->columnSpan('full'),
@@ -135,8 +139,13 @@ class ImmediateExpenseResource extends Resource
             ])->defaultSort('pay_day', 'desc')
             ->filters([
                 Filter::make('month')
-                    ->columnSpan(6)
-                    ->columns(2)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 6
+                    ])
+                    ->columns([
+                        'default' => 2
+                    ])
                     ->form([
                         Select::make('month')
                             ->label('Mês')
@@ -177,8 +186,14 @@ class ImmediateExpenseResource extends Resource
                             );
                     }),
                 Filter::make('pay_day')
-                    ->columnSpan(6)
-                    ->columns(2)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6
+                    ])
+                    ->columns([
+                        'default' => 1,
+                        'md' => 2
+                    ])
                     ->form([
                         DatePicker::make('start_date')
                             ->label('Pagamento inicial')
@@ -201,15 +216,48 @@ class ImmediateExpenseResource extends Resource
                 SelectFilter::make('category_id')
                     ->label('Categoria')
                     ->relationship('category', 'title')
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6,
+                        'lg' => 3,
+                    ]),
                 SelectFilter::make('bank_id')
                     ->label('Banco')
                     ->relationship('bank', 'title')
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6,
+                        'lg' => 3,
+                    ]),
                 SelectFilter::make('mean_payment_id')
                     ->label('Meio de pagamento')
                     ->relationship('meanPayment', 'title')
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6,
+                        'lg' => 3,
+                    ]),
+                SelectFilter::make('status')
+                    ->options([
+                        'pendente' => 'Pendente',
+                        'pago'     => 'Pago',
+                    ])
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6,
+                        'lg' => 3,
+                    ]),
+                SelectFilter::make('type')
+                    ->label('Tipo')
+                    ->options([
+                        'inscontante' => 'Inscontante',
+                        'fixo'        => 'Fixo',
+                    ])
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6,
+                        'lg' => 3,
+                    ]),
             ], FiltersLayout::AboveContentCollapsible)
             ->filtersFormWidth(MaxWidth::ExtraLarge)
             ->filtersFormColumns(12)
