@@ -27,7 +27,7 @@ class MetaResource extends Resource
 {
     protected static ?string $model = Meta::class;
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     public static function getNavigationGroup(): ?string
     {

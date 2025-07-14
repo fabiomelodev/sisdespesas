@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reports', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->longText('content');
-            $table->string('date');
-            $table->string('status');
-            $table->timestamps();
+        Schema::table('deposits', function (Blueprint $table) {
+            $table->string('status')->change();
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reports');
+        Schema::table('deposits', function (Blueprint $table) {
+            //
+        });
     }
 };

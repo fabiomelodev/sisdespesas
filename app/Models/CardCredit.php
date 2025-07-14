@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\FormatCurrency;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,7 @@ class CardCredit extends Model
     public static function getCardCreditsTotalCurrentMonth($month, $year)
     {
         return self::with('bank', 'invoices.credits')
+            // ->whereRelation('invoices', 'id', 21)
             ->get()
             ->map(function ($cardCredit) use ($month, $year) {
                 $bank = $cardCredit->bank;
@@ -48,7 +50,7 @@ class CardCredit extends Model
                     $creditsTotal = optional($invoice)->credits()?->sum('value');
                 }
 
-                $limit = $cardCredit->value - $creditsTotal;
+                $limit = (float) $cardCredit->value - (float) $creditsTotal;
 
                 $credits = $invoice->credits()
                     ->orderBy('pay_day', 'desc')

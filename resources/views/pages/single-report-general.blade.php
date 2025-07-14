@@ -22,7 +22,7 @@
                     </h2>
                 </div>
 
-                <div class="grid grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
                     <!-- loop -->
                     @foreach($banks as $bank)
@@ -74,7 +74,7 @@
                     </h2>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
                     <div class="flex flex-col gap-y-2">
 
@@ -166,72 +166,40 @@
                     </h2>
                 </div>
 
-                <div class="grid grid-cols-1 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     <!-- loop -->
                     @foreach($cardCredits as $cardCredit)
-                        <div class="flex flex-wrap border-b-2 last:border-0 border-white/10 pb-4">
-
-                            <div class="w-1/3 pr-4">
-                                <div
-                                    class="shadow-lg rounded-lg  p-6"
-                                    style="background-color: {{ $cardCredit['bank_color'] }}">
-                                    <div class="w-10 h-10 rounded-full overflow-hidden flex justify-center items-center bg-white/50 p-2">
-                                        <img
-                                            src="{{ Storage::url($cardCredit['bank_icon']) }}"
-                                            alt="{{ $cardCredit['title'] }}" />
-                                    </div>
-
-                                    <h4 class="text-2xl font-bold text-white mt-2">
-                                        {{ $cardCredit['title'] }}
-                                    </h4>
-
-                                    <p class="shadow-lg rounded-lg inline-block text-[10px] font-bold text-center capitalize text-white {{ $cardCredit['status'] == 'pago' ? 'bg-green-500' : 'bg-red-500' }} py-1 px-2">
-                                        {{ $cardCredit['status'] }}
-                                    </p>
-
-                                    <div class="flex justify-between gap-2 mt-4">
-                                        <p class="text-xs font-medium text-white/50">
-                                            Limite <br />
-                                            <span class="text-sm font-bold text-white">
-                                                {{ $cardCredit['limit'] }}
-                                            </span>
-                                        </p>
-
-                                        <p class="text-xs font-medium text-white/50">
-                                            Gasto <br />
-                                            <span class="text-sm font-bold text-white">
-                                            {{ $cardCredit['creditsTotal'] }}
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
+                        <div
+                            class="shadow-lg rounded-lg  p-6"
+                            style="background-color: {{ $cardCredit['bank_color'] }}">
+                            <div class="w-10 h-10 rounded-full overflow-hidden flex justify-center items-center bg-white/50 p-2">
+                                <img
+                                    src="{{ Storage::url($cardCredit['bank_icon']) }}"
+                                    alt="{{ $cardCredit['title'] }}" />
                             </div>
 
-                            <div class="w-2/3 pl-4">
+                            <h4 class="text-2xl font-bold text-white mt-2">
+                                {{ $cardCredit['title'] }}
+                            </h4>
 
-                                <div class="flex flex-wrap gap-2">
-                                    <!-- loop -->
-                                    @foreach($cardCredit['credits'] as $credit)
-                                        <div class="w-full shadow-lg rounded-lg grid grid-cols-4 gap-2 bg-white p-2">
-                                            <p class="text-xs font-semibold">
-                                                {{ Illuminate\Support\Str::limit($credit->title, 25) }}
-                                            </p>
+                            <p class="shadow-lg rounded-lg inline-block text-[10px] font-bold text-center capitalize text-white {{ $cardCredit['status'] == 'pago' ? 'bg-green-500' : 'bg-red-500' }} py-1 px-2">
+                                {{ $cardCredit['status'] }}
+                            </p>
 
-                                            <p class="text-xs font-semibold text-center">
-                                                {{ $credit->category->title}}
-                                            </p>
+                            <div class="flex justify-between gap-2 mt-4">
+                                <p class="text-xs font-medium text-white/50">
+                                    Limite <br />
+                                    <span class="text-sm font-bold text-white">
+                                        {{ $cardCredit['limit'] }}
+                                    </span>
+                                </p>
 
-                                            <p class="text-xs font-semibold text-center">
-                                                {{ $credit->pay_day->format('d/m/Y') }}
-                                            </p>
-
-                                            <p class="text-xs font-semibold text-right">
-                                                {{ \App\Helpers\FormatCurrency::getFormatCurrency($credit->value) }}
-                                            </p>
-                                        </div>
-                                    @endforeach
-                                    <!-- end loop -->
-                                </div>
+                                <p class="text-xs font-medium text-white/50">
+                                    Gasto <br />
+                                    <span class="text-sm font-bold text-white">
+                                    {{ $cardCredit['creditsTotal'] }}
+                                    </span>
+                                </p>
                             </div>
                         </div>
                     @endforeach
@@ -242,70 +210,89 @@
     </section>
     <!-- end credits -->
 
-    <section class="flex">
+    <!-- categories -->
+    <section class="pt-6">
 
-        <div class="w-full">
+        <div class="container">
 
-            <!-- categories -->
-            <livewire:report-categories year="{{ $reportGeneral->year }}" month="{{ $reportGeneral->month }}" />
-            <!-- end categories -->
+            <div class="shadow-lg rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 p-4">
+                <livewire:report-categories year="{{ $reportGeneral->year }}" month="{{ $reportGeneral->month }}" />
+            </div>
+        </div>
+    </section>
+    <!-- end categories -->
 
-            <!-- metas -->
-            <div class="py-10 px-4">
-                <div class="mb-16 py-6">
-                    <h2 class="text-6xl font-bold text-center uppercase text-indigo-600">
+    <!-- metas -->
+    <section class="pt-6">
+
+        <div class="container">
+
+            <div class="shadow-lg rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 p-4">
+
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-white">
                         Metas
                     </h2>
                 </div>
 
-                <div class="grid grid-cols-2 gap-y-4">
-                    <!-- loop -->
-                    @foreach($metas as $meta)
-                        <div>
-                            <div class="mb-2">
-                                <h3 class="text-4xl font-bold">
-                                    {{ $meta['title'] }}
-                                </h3>
-                            </div>
+                <div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-y-4">
+                        <!-- loop -->
+                        @foreach($metas as $meta)
+                            <div>
+                                <div class="mb-2">
+                                    <h3 class="text-4xl font-bold text-white">
+                                        {{ $meta['title'] }}
+                                    </h3>
+                                </div>
 
-                            <div class="mb-2">
-                                <p class="text-2xl font-bold">
-                                    {{ $meta['value'] }} / {{ $meta['meta'] }}
-                                </p>
-                            </div>
-
-                            <div class="w-96 h-6 border-2 border-indigo-600 rounded-lg overflow-hidden flex bg-indigo-400 mb-1">
-                                <div class="rounded-md flex items-center bg-indigo-600 p-1" style="width:{{ $meta['percentage'] }}%">
-                                    <p class="text-xs font-bold text-white">
-                                        {{ $meta['percentage'] }}%
+                                <div class="mb-2">
+                                    <p class="text-2xl font-bold text-white">
+                                        {{ $meta['value'] }} / {{ $meta['meta'] }}
                                     </p>
                                 </div>
-                            </div>
 
-                            <div>
-                                <p class="text-xs font-medium">
-                                    Está quase passando o limite da meta!!!
-                                </p>
+                                <div class="w-full lg:w-96 h-6 border-2 border-indigo-600 rounded-lg overflow-hidden flex bg-indigo-400 mb-1">
+                                    <div class="rounded-md flex items-center bg-indigo-600 p-1" style="width:{{ $meta['percentage'] }}%">
+                                        <p class="text-xs font-bold text-white">
+                                            {{ $meta['percentage'] }}%
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {{-- <div>
+                                    <p class="text-xs font-medium text-white">
+                                        Está quase passando o limite da meta!!!
+                                    </p>
+                                </div> --}}
                             </div>
-                        </div>
-                    @endforeach
-                    <!-- end loop -->
+                        @endforeach
+                        <!-- end loop -->
+                    </div>
                 </div>
             </div>
-            <!-- end metas -->
+        </div>
+    </section>
+    <!-- end metas -->
+
+    <!-- uber -->
+    <section class="py-6">
+
+        <div class="container">
 
             <!-- uber -->
-            <div class="bg-black py-10 px-4">
-                <div class="mb-16">
-                    <h2 class="text-6xl font-bold text-center uppercase text-white">
+            <div class="shadow-lg rounded-lg bg-black p-4">
+
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-white">
                         Uber
                     </h2>
                 </div>
 
-                <div class="grid grid-cols-12 gap-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-4">
 
                     <div class="col-span-3 border-2 border-white/50 rounded-lg shadow-lg flex gap-x-2 bg-black py-6 px-2">
-                        <img class="w-10 h-10" style="filter: invert(1)" src="{{ Vite::asset('resources/images/icon-calendar.png')}}" alt="Ícone calendário - SIS Despesas" />
+                        <img class="w-10 h-10" style="filter: invert(1)" src="{{ asset('images/icon-calendar.png')}}" alt="Ícone calendário - SIS Despesas" />
 
                         <div>
                             <p class="text-sm font-semibold text-white/50">
@@ -323,7 +310,7 @@
                     </div>
 
                     <div class="col-span-3 border-2 border-white/50 rounded-lg shadow-lg flex gap-x-2 bg-black py-6 px-2">
-                        <img class="w-10 h-10" style="filter: invert(1)" src="{{ Vite::asset('resources/images/icon-calendar.png')}}" alt="Ícone calendário - SIS Despesas" />
+                        <img class="w-10 h-10" style="filter: invert(1)" src="{{ asset('images/icon-calendar.png')}}" alt="Ícone calendário - SIS Despesas" />
 
                         <div>
                             <p class="text-sm font-semibold text-white/50">
@@ -341,7 +328,7 @@
                     </div>
 
                     <div class="col-span-3 border-2 border-white/50 rounded-lg shadow-lg flex gap-x-2 bg-black py-6 px-2">
-                        <img class="w-12 h-12" style="filter: invert(1)" src="{{ Vite::asset('resources/images/icon-car.png')}}" alt="Ícone carro - SIS Despesas" />
+                        <img class="w-12 h-12" style="filter: invert(1)" src="{{ asset('images/icon-car.png')}}" alt="Ícone carro - SIS Despesas" />
 
                         <div>
                             <p class="text-sm font-semibold text-white/50">
@@ -359,7 +346,7 @@
                     </div>
 
                     <div class="col-span-3 border-2 border-white/50 rounded-lg shadow-lg flex gap-x-2 bg-black py-6 px-2">
-                        <img class="w-12 h-12" style="filter: invert(1)" src="{{ Vite::asset('resources/images/icon-car.png')}}" alt="Ícone carro - SIS Despesas" />
+                        <img class="w-12 h-12" style="filter: invert(1)" src="{{ asset('images/icon-car.png')}}" alt="Ícone carro - SIS Despesas" />
 
                         <div>
                             <p class="text-sm font-semibold text-white/50">
@@ -390,7 +377,7 @@
                         </p>
                     </div>
 
-                    <div class="w-96 h-6 border-2 border-white rounded-lg overflow-hidden flex bg-white mb-2">
+                    <div class="w-full lg:w-96 h-6 border-2 border-white rounded-lg overflow-hidden flex bg-white mb-2">
                         <div class="rounded-md flex items-center {{ $uberMetaPercentage > 90 ? 'bg-red-500' : 'bg-indigo-600' }} p-1" style="width:{{ $uberMetaPercentage >= 100 ? '100' : $uberMetaPercentage }}%">
                             <p class="text-xs font-bold text-white">
                                 {{ $uberMetaPercentage >= '100' ? '100' : $uberMetaPercentage }}%
@@ -408,4 +395,5 @@
             <!-- end uber -->
         </div>
     </section>
+    <!-- end uber -->
 </x-layout.single-base>

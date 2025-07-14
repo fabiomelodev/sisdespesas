@@ -52,7 +52,10 @@ class ImmediateExpenseResource extends Resource
             ->columns(12)
             ->schema([
                 Section::make()
-                    ->columnSpan(9)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 9,
+                    ])
                     ->columns(12)
                     ->schema([
                         Select::make('type')
@@ -64,32 +67,48 @@ class ImmediateExpenseResource extends Resource
                             ->default('inscontante')
                             ->reactive()
                             ->required()
-                            ->columnSpan('full'),
+                            ->columnSpan([
+                                'default' => 'full',
+                            ]),
                         TextInput::make('title')
                             ->label('Título')
                             ->required()
                             ->maxLength(255)
-                            ->columnSpan('full'),
+                            ->columnSpan([
+                                'default' => 'full',
+                            ]),
                         Select::make('mean_payment_id')
                             ->label('Meio de pagamento')
                             ->relationship('meanPayment', 'title')
                             ->placeholder('Selecionar')
                             ->required(fn(Get $get): bool => $get('type') === 'inscontante')
-                            ->columnSpan(6),
+                            ->columnSpan([
+                                'default' => 'full',
+                                'md'      => 6,
+                            ]),
                         DatePicker::make('due_date')
                             ->label('Data de vencimento')
                             ->displayFormat('d/m/Y')
                             ->hidden(fn(Get $get): bool => $get('type') === 'inscontante')
                             ->required()
-                            ->columnSpan(6),
+                            ->columnSpan([
+                                'default' => 'full',
+                                'md'      => 6,
+                            ]),
                         DatePicker::make('pay_day')
                             ->label('Data de pagamento')
                             ->displayFormat('d/m/Y')
                             ->required(fn(Get $get): bool => $get('type') === 'inscontante')
-                            ->columnSpan(6),
+                            ->columnSpan([
+                                'default' => 'full',
+                                'md'      => 6,
+                            ]),
                     ]),
                 Section::make()
-                    ->columnSpan(3)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 9,
+                    ])
                     ->schema([
                         TextInput::make('value')
                             ->label('Valor')
@@ -104,8 +123,12 @@ class ImmediateExpenseResource extends Resource
                             ->placeholder('Selecionar')
                             ->relationship('category', 'title')
                             ->required(),
-                        Toggle::make('status')
+                        Select::make('status')
                             ->label('Status')
+                            ->options([
+                                'pendente' => 'Pendente',
+                                'pago'     => 'Pago',
+                            ])
                             ->required()
                             ->hidden(fn(Get $get): bool => $get('type') === 'inscontante')
                             ->columnSpan('full'),
@@ -135,8 +158,13 @@ class ImmediateExpenseResource extends Resource
             ])->defaultSort('pay_day', 'desc')
             ->filters([
                 Filter::make('month')
-                    ->columnSpan(6)
-                    ->columns(2)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 6
+                    ])
+                    ->columns([
+                        'default' => 2
+                    ])
                     ->form([
                         Select::make('month')
                             ->label('Mês')
@@ -177,8 +205,14 @@ class ImmediateExpenseResource extends Resource
                             );
                     }),
                 Filter::make('pay_day')
-                    ->columnSpan(6)
-                    ->columns(2)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6
+                    ])
+                    ->columns([
+                        'default' => 1,
+                        'md' => 2
+                    ])
                     ->form([
                         DatePicker::make('start_date')
                             ->label('Pagamento inicial')
@@ -201,15 +235,48 @@ class ImmediateExpenseResource extends Resource
                 SelectFilter::make('category_id')
                     ->label('Categoria')
                     ->relationship('category', 'title')
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6,
+                        'lg' => 3,
+                    ]),
                 SelectFilter::make('bank_id')
                     ->label('Banco')
                     ->relationship('bank', 'title')
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6,
+                        'lg' => 3,
+                    ]),
                 SelectFilter::make('mean_payment_id')
                     ->label('Meio de pagamento')
                     ->relationship('meanPayment', 'title')
-                    ->columnSpan(3),
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6,
+                        'lg' => 3,
+                    ]),
+                SelectFilter::make('status')
+                    ->options([
+                        'pendente' => 'Pendente',
+                        'pago'     => 'Pago',
+                    ])
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6,
+                        'lg' => 3,
+                    ]),
+                SelectFilter::make('type')
+                    ->label('Tipo')
+                    ->options([
+                        'inscontante' => 'Inscontante',
+                        'fixo'        => 'Fixo',
+                    ])
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md' => 6,
+                        'lg' => 3,
+                    ]),
             ], FiltersLayout::AboveContentCollapsible)
             ->filtersFormWidth(MaxWidth::ExtraLarge)
             ->filtersFormColumns(12)

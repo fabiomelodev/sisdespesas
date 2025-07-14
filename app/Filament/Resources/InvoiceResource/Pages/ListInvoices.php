@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\InvoiceResource\Pages;
 
 use App\Filament\Resources\InvoiceResource;
-use App\Filament\Widgets\InvoiceTotalCurrentWidget;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -15,13 +14,6 @@ class ListInvoices extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-        ];
-    }
-
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            InvoiceTotalCurrentWidget::make()
         ];
     }
 }

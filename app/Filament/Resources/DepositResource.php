@@ -9,7 +9,9 @@ use Filament\Forms;
 use Filament\Forms\Components\{DatePicker, Section, Select, Textarea, TextInput, Toggle};
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -43,6 +45,10 @@ class DepositResource extends Resource
             ->columns(12)
             ->schema([
                 Section::make()
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 9,
+                    ])
                     ->schema([
                         TextInput::make('type')
                             ->label('Tipo')
@@ -53,9 +59,12 @@ class DepositResource extends Resource
                             ->rows(5)
                             ->required()
                             ->columnSpan('full'),
-                    ])
-                    ->columnSpan(9),
+                    ]),
                 Section::make()
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 3,
+                    ])
                     ->schema([
                         Select::make('bank_id')
                             ->label('Banco')
@@ -74,12 +83,15 @@ class DepositResource extends Resource
                             ->displayFormat('d/m/Y')
                             ->required()
                             ->columnSpan('full'),
-                        Toggle::make('status')
+                        Select::make('status')
                             ->label('Status')
+                            ->options([
+                                'pendente' => 'Pendente',
+                                'pago'     => 'Pago',
+                            ])
                             ->required()
                             ->columnSpan('full'),
                     ])
-                    ->columnSpan(3)
             ]);
     }
 
@@ -100,17 +112,20 @@ class DepositResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn(string $state): string => match ($state) {
-                        '0' => 'Pendente',
-                        '1' => 'Concluído'
+                        'pendente' => 'Pendente',
+                        'pago'     => 'Pago'
                     })
                     ->color(fn(string $state): string => match ($state) {
-                        '0' => 'danger',
-                        '1' => 'success'
+                        'pendente' => 'danger',
+                        'pago'     => 'success'
                     }),
             ])->defaultSort('entry_date', 'desc')
             ->filters([
                 Filter::make('month')
-                    ->columnSpan(6)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 3,
+                    ])
                     ->form([
                         Select::make('month')
                             ->label('Mês')
@@ -138,7 +153,10 @@ class DepositResource extends Resource
                             );
                     }),
                 Filter::make('year')
-                    ->columnSpan(6)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 3,
+                    ])
                     ->form([
                         Select::make('year')
                             ->label('Ano')
@@ -159,9 +177,23 @@ class DepositResource extends Resource
                     }),
                 SelectFilter::make('bank_id')
                     ->label('Banco')
-                    ->columnSpan('full')
-                    ->relationship('bank', 'title', fn(Builder $query) => $query->where('user_id', Auth::user()->id))
-            ])
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 3,
+                    ])
+                    ->relationship('bank', 'title', fn(Builder $query) => $query->where('user_id', Auth::user()->id)),
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 3,
+                    ])
+                    ->options([
+                        'pendente' => 'Pendente',
+                        'pago'     => 'Pago',
+                    ]),
+            ], FiltersLayout::AboveContentCollapsible)
+            ->filtersFormWidth(MaxWidth::ExtraLarge)
             ->filtersFormColumns(12)
             ->actions([
                 Tables\Actions\EditAction::make(),
