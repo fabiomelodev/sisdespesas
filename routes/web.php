@@ -36,23 +36,12 @@ Route::get('/categoria/{category:id}/', [CategoryController::class, 'show'])->na
 
 Route::get('relatorio-geral/{reportGeneral:code}', [ReportGeneralController::class, 'show'])->name('report-general.show');
 
-Route::get('despesas-creditos', function () {
-    // die;
-    // $expenses = Expense::whereHas('meanPayment', function (Builder $query) {
-    //     $query->where('user_id', Auth::user()->id)
-    //         ->where('pay_day', '>=', '2025-01-01')
-    //         ->where('pay_day', '<=', Carbon::now()->endOfDay())
-    //         ->where('mean_payment_id', 2);
-    // })->get();
-
-    // foreach ($expenses as $expense) {
-    //     CreditExpense::create([
-    //         'title'           => $expense->title,
-    //         'value'           => $expense->value,
-    //         'pay_day'         => $expense->pay_day,
-    //         'bank_id'         => $expense->bank_id,
-    //         'category_id'     => $expense->category_id,
-    //         'invoice_id'      => $expense->invoice_id,
-    //     ]);
-    // }
-});
+// Route::get('entradas', function () {
+//     App\Models\Deposit::all()->each(function ($deposit) {
+//         $deposit->status = match ($deposit->status) {
+//             '0' => 'pendente',
+//             '1' => 'pago',
+//         };
+//         $deposit->save();
+//     });
+// });
