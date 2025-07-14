@@ -38,6 +38,7 @@ class ImmediateExpense extends Model
             ->whereYear('due_date', $year)
             ->where('type', 'fixo')
             ->where('status', 'pendente')
+            ->orderBy('due_date', 'desc')
             ->get();
     }
 
@@ -47,6 +48,7 @@ class ImmediateExpense extends Model
             ->whereYear('pay_day', $year)
             ->where('type', 'fixo')
             ->where('status', 'pago')
+            ->orderBy('pay_day', 'desc')
             ->get();
     }
 

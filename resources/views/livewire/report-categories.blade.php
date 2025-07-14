@@ -1,24 +1,24 @@
 <div
-class="relative bg-indigo-600 py-10 px-4"
+class="relative"
 x-data="{ modal: false }">
-    <div class="w-full mb-16 py-6">
-        <h2 class="text-6xl font-bold text-center uppercase text-white">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-white">
             Categorias
         </h2>
     </div>
 
-    <div class="grid grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <!-- loop -->
         @foreach($categories as $category)
             <div
-            class="rounded-lg flex flex-col bg-white p-4"
+            class="rounded-lg flex flex-col bg-gray-800 p-4"
             wire:key="category-{{ $category['id'] }}">
 
-                <p class="font-semibold text-black/50">
+                <p class="font-semibold text-white/80">
                     {{ $category['title'] }}
                 </p>
 
-                <p class="text-3xl font-bold text-indigo-600">
+                <p class="text-3xl font-bold text-white">
                     {{ \App\Helpers\FormatCurrency::getFormatCurrency($category['totalExpenses']) }}
                 </p>
 
@@ -35,7 +35,7 @@ x-data="{ modal: false }">
         <!-- end loop -->
 
         <div
-        class="col-span-full rounded-lg flex flex-col gap-4 bg-white p-4"
+        class="w-full h-screen top-0 left-0 rounded-lg fixed hidden flex-col gap-4 bg-gray-800 p-4"
         x-show="modal"
         x-cloak>
 

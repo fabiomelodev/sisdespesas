@@ -50,7 +50,7 @@ class Bank extends Model
                 $expenses = $expensesTotalValue + $ubersTotalValue;
 
                 $depositsTotalValue = $bank->deposits()
-                    ->where('status', 1)
+                    ->where('status', 'pago')
                     ->whereMonth('entry_date', $month)
                     ->whereYear('entry_date', $year)
                     ->sum('wage');

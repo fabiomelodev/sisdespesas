@@ -1,16 +1,16 @@
 {
   "resources/css/filament.css": {
-    "file": "assets/filament-D4OIolRZ.css",
+    "file": "assets/filament-QRSgCFgS.css",
     "src": "resources/css/filament.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BVwYmzr2.js",
+    "file": "assets/app--VV8H-9M.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-CPMf-g8k.css"
+      "assets/app-aGrVBQJg.css"
     ]
   }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\RelationManagers;
 use App\Models\Invoice;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
@@ -141,7 +142,7 @@ class InvoiceResource extends Resource
                                 '11' => 'Novembro',
                                 '12' => 'Dezembro',
                             ])
-                            ->default(date('m')),
+                            ->default(Carbon::now()->addMonth()->format('m')),
                         Select::make('year')
                             ->label('Ano')
                             ->columnSpan(1)
