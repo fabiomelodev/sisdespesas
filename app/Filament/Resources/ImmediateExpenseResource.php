@@ -52,7 +52,10 @@ class ImmediateExpenseResource extends Resource
             ->columns(12)
             ->schema([
                 Section::make()
-                    ->columnSpan(9)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 9,
+                    ])
                     ->columns(12)
                     ->schema([
                         Select::make('type')
@@ -64,32 +67,48 @@ class ImmediateExpenseResource extends Resource
                             ->default('inscontante')
                             ->reactive()
                             ->required()
-                            ->columnSpan('full'),
+                            ->columnSpan([
+                                'default' => 'full',
+                            ]),
                         TextInput::make('title')
                             ->label('Título')
                             ->required()
                             ->maxLength(255)
-                            ->columnSpan('full'),
+                            ->columnSpan([
+                                'default' => 'full',
+                            ]),
                         Select::make('mean_payment_id')
                             ->label('Meio de pagamento')
                             ->relationship('meanPayment', 'title')
                             ->placeholder('Selecionar')
                             ->required(fn(Get $get): bool => $get('type') === 'inscontante')
-                            ->columnSpan(6),
+                            ->columnSpan([
+                                'default' => 'full',
+                                'md'      => 6,
+                            ]),
                         DatePicker::make('due_date')
                             ->label('Data de vencimento')
                             ->displayFormat('d/m/Y')
                             ->hidden(fn(Get $get): bool => $get('type') === 'inscontante')
                             ->required()
-                            ->columnSpan(6),
+                            ->columnSpan([
+                                'default' => 'full',
+                                'md'      => 6,
+                            ]),
                         DatePicker::make('pay_day')
                             ->label('Data de pagamento')
                             ->displayFormat('d/m/Y')
                             ->required(fn(Get $get): bool => $get('type') === 'inscontante')
-                            ->columnSpan(6),
+                            ->columnSpan([
+                                'default' => 'full',
+                                'md'      => 6,
+                            ]),
                     ]),
                 Section::make()
-                    ->columnSpan(3)
+                    ->columnSpan([
+                        'default' => 'full',
+                        'md'      => 9,
+                    ])
                     ->schema([
                         TextInput::make('value')
                             ->label('Valor')
