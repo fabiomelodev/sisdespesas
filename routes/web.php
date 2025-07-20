@@ -38,9 +38,8 @@ Route::get('relatorio-geral/{reportGeneral:code}', [ReportGeneralController::cla
 
 Route::get('entradas', function () {
     App\Models\Deposit::all()->each(function ($deposit) {
-        $deposit->status = match ((string) $deposit->status) {
-            '0' => 'pendente',
-            '1' => 'pago',
+        $deposit->status = match ($deposit->status) {
+            'pendente' => 'pago',
         };
         $deposit->save();
     });
