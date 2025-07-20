@@ -107,7 +107,7 @@ class ImmediateExpenseResource extends Resource
                 Section::make()
                     ->columnSpan([
                         'default' => 'full',
-                        'md'      => 9,
+                        'md'      => 3,
                     ])
                     ->schema([
                         TextInput::make('value')
