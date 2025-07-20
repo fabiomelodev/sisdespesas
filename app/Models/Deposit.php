@@ -22,10 +22,18 @@ class Deposit extends Model
     {
         static::creating(function ($model) {
             $model->user_id = Auth::user()->id;
+
+            $wage = str_replace(',', '', $model->wage);
+
+            $model->wage = $wage;
         });
 
         static::updating(function ($model) {
             $model->user_id = Auth::user()->id;
+
+            $wage = str_replace(',', '', $model->wage);
+
+            $model->wage = $wage;
         });
     }
 

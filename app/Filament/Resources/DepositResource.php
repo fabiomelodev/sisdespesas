@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DepositResource\Pages;
 use App\Filament\Resources\DepositResource\RelationManagers;
+use App\Helpers\FormatCurrency;
 use App\Models\Deposit;
 use Filament\Forms;
 use Filament\Forms\Components\{DatePicker, Section, Select, Textarea, TextInput, Toggle};
@@ -75,7 +76,6 @@ class DepositResource extends Resource
                         TextInput::make('wage')
                             ->label('Valor')
                             ->prefix('R$')
-                            ->numeric()
                             ->required()
                             ->columnSpan('full'),
                         DatePicker::make('entry_date')
@@ -108,7 +108,7 @@ class DepositResource extends Resource
                     ->dateTime('d/m/Y'),
                 Tables\Columns\TextColumn::make('wage')
                     ->label('Salário')
-                    ->formatStateUsing(fn(string $state): string => 'R$ ' . number_format($state, 2, ',', '.')),
+                    ->formatStateUsing(fn(string $state): string => FormatCurrency::getFormatCurrency($state)),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn(string $state): string => match ($state) {
