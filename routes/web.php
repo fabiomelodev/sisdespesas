@@ -36,12 +36,12 @@ Route::get('/categoria/{category:id}/', [CategoryController::class, 'show'])->na
 
 Route::get('relatorio-geral/{reportGeneral:code}', [ReportGeneralController::class, 'show'])->name('report-general.show');
 
-// Route::get('entradas', function () {
-//     App\Models\Deposit::all()->each(function ($deposit) {
-//         $deposit->status = match ($deposit->status) {
-//             '0' => 'pendente',
-//             '1' => 'pago',
-//         };
-//         $deposit->save();
-//     });
-// });
+Route::get('entradas', function () {
+    App\Models\Deposit::all()->each(function ($deposit) {
+        $deposit->status = match ($deposit->status) {
+            '0' => 'pendente',
+            '1' => 'pago',
+        };
+        $deposit->save();
+    });
+});
