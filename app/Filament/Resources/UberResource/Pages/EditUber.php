@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\UberResource\Pages;
 
 use App\Filament\Resources\UberResource;
-use App\Filament\Widgets\UberRouteTableWidget;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -20,8 +19,6 @@ class EditUber extends EditRecord
 
     protected function getFooterWidgets(): array
     {
-        return [
-            UberRouteTableWidget::class,
-        ];
+        return [];
     }
 }
