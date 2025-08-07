@@ -60,7 +60,9 @@ class ReportCategories extends Component
                     ->whereYear('pay_day', $this->year)
                     ->get();
 
-                $totalExpenses = $immediateExpenses->sum('value') + $credits->sum('value');
+                // $totalExpenses = $immediateExpenses->sum('value') + $credits->sum('value');
+
+                $totalExpenses = $immediateExpenses->sum('value');
 
                 return [
                     'id'                => $category->id,

@@ -17,6 +17,10 @@ class Invoice extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'due_date' => 'datetime',
+    ];
+
     protected static function booted(): void
     {
         static::creating(function ($model) {

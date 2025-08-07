@@ -9,6 +9,7 @@ use App\Models\CardCredit;
 use App\Models\Category;
 use App\Models\Expense;
 use App\Models\ImmediateExpense;
+use App\Models\Invoice;
 use App\Models\Meta;
 use App\Models\ReportGeneral;
 use App\Models\Uber;
@@ -63,7 +64,11 @@ class ReportGeneralController extends Controller
 
         $expensesCategories = Category::getTotalCategoriesImmediateExpensesCurrentMonth($reportGeneral->month, $reportGeneral->year);
 
-        $cardCredits = CardCredit::getCardCreditsTotalCurrentMonth($reportGeneral->month, $reportGeneral->year);;
+        $cardCredits = CardCredit::getCardCreditsTotalCurrentMonth($reportGeneral->month, $reportGeneral->year);
+
+        $invoicesNextMonth = Invoice::whereMonth('due_date', $reportGeneral->month + 1)
+            ->whereYear('due_date', $reportGeneral->year)
+            ->get();
 
         $metas = Meta::getMetasByCategoryCurrentMonth($reportGeneral->month, $reportGeneral->year);
 
@@ -116,6 +121,7 @@ class ReportGeneralController extends Controller
             'expensesFixedPaidTotalValues'   => $expensesFixedPaidTotalValues,
             'expensesCategories'             => $expensesCategories,
             'cardCredits'                    => $cardCredits,
+            'invoicesNextMonth'              => $invoicesNextMonth,
             'metas'                          => $metas,
             'ubersYearCurrentTotalValue'     => $ubersYearCurrentTotalValue,
             'ubersYearCurrentQty'            => $ubersYearCurrentQty,

@@ -65,49 +65,125 @@ x-data="{ modal: false }">
                     </p>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- loop -->
-            @if($expenses)
-                @foreach($expenses as $expense)
-                    <div
-                    class="border-b shadow-lg rounded-xl grid grid-cols-4 bg-indigo-600 p-4"
-                    wire:key="expense-{{ $expense->id }}">
+    <!-- modal -->
+    <div
+    class="w-full h-screen top-0 left-0 fixed flex justify-center items-center bg-black/50 z-50"
+    x-show="modal"
+    x-cloak>
+
+        <div
+        class="w-10 h-10 transition hover:scale-90 top-6 right-6 shadow-lg rounded-full absolute flex justify-center items-center bg-white cursor-pointer"
+        x-on:click="modal = false">
+            <p class="font-bold text-gray-800">
+                x
+            </p>
+        </div>
+
+        <div class="container flex">
+
+            <div class="w-2/12">
+
+                <div class="w-full shadow-lg rounded-lg border flex flex-col bg-white p-4">
+
+                    @if($expenses)
+                        <p class="text-[10px] font-medium text-gray-800 mb-2">
+                            Quantidade: {{ $expenses->count()   }}
+                        </p>
+                    @endif
+
+                    <p class="text-sm font-bold text-gray-800">
+                        Total de despesas:
+                    </p>
+
+                    <p class="text-xl font-bold text-gray-800">
+                        {{ \App\Helpers\FormatCurrency::getFormatCurrency($expensesTotal) }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-8/12 pl-4">
+
+                <div class="w-full h-[580px] shadow-lg rounded-lg border flex flex-col gap-2 bg-white p-4">
+
+                    <div class="w-full shadow-lg rounded-lg grid grid-cols-5 bg-gray-800 p-2">
 
                         <div>
-                            <p class="text-sm font-semibold text-white">
-                                {{ $expense->title }}
+                            <p class="text-xs font-bold text-white">
+                                Despesa
                             </p>
                         </div>
 
                         <div>
-                            <p class="text-sm font-semibold  text-center text-white">
-                                {{ $expense->meanPayment->title }}
+                            <p class="text-xs font-bold text-center text-white">
+                                Categoria
                             </p>
                         </div>
 
                         <div>
-                            <p class="text-sm font-semibold text-center text-white">
-                                {{ $expense->pay_day->format('d/m/y') }}
+                            <p class="text-xs font-bold text-center text-white">
+                                Banco
                             </p>
                         </div>
 
                         <div>
-                            <p class="text-sm font-semibold text-right text-white">
-                                {{ \App\Helpers\FormatCurrency::getFormatCurrency($expense->value) }}
+                            <p class="text-xs font-bold text-center text-white">
+                                Data pago
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs font-bold text-right text-white">
+                                Valor
                             </p>
                         </div>
                     </div>
-                @endforeach
-            @endif
-            <!-- end loop -->
 
-            <div>
-                @if($expensesTotal)
-                    <p>
-                        Total: {{ $expensesTotal }}
-                    </p>
-                @endif
+                    <div class="h-[494px] overflow-y-scroll">
+                        <!-- loop -->
+                        @if($expenses)
+                            @foreach($expenses as $expense)
+                                <div class="border-b shadow-lg rounded-xl grid grid-cols-5 odd:bg-indigo-600 even:bg-indigo-500 p-2">
+
+                                    <div>
+                                        <p class="text-xs font-semibold text-white">
+                                            {{ $expense->title }}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-xs font-semibold text-center text-white">
+                                            {{ $expense->category->title}}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-xs font-semibold text-center text-white">
+                                            {{ $expense->bank->title }}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-xs font-semibold text-center text-white">
+                                            {{ $expense->pay_day->format('d/m/y') }}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-xs font-semibold text-right text-white">
+                                            {{ \App\Helpers\FormatCurrency::getFormatCurrency($expense->value) }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                        <!-- end loop -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <!-- end modal -->
 </div>
