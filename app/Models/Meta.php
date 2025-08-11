@@ -28,7 +28,7 @@ class Meta extends Model
 
     public static function getMetasByCategoryCurrentMonth($month, $year)
     {
-        return Meta::where('month', $month)
+        return collect(Meta::where('month', $month)
             ->where('year', $year)
             ->get()
             ->map(function ($meta) use ($month, $year) {
@@ -51,7 +51,7 @@ class Meta extends Model
                     'meta'       => FormatCurrency::getFormatCurrency($meta->value),
                     'percentage' => $percentage
                 ];
-            });
+            }))->sortBy('title');
     }
 
     public function category(): BelongsTo

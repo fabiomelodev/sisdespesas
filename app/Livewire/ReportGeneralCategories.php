@@ -3,13 +3,10 @@
 namespace App\Livewire;
 
 use App\Models\Category;
-use Livewire\Component;
-use App\Models\Expense;
 use App\Models\ImmediateExpense;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
-class ReportCategories extends Component
+class ReportGeneralCategories extends Component
 {
     public $categories;
 
@@ -21,31 +18,17 @@ class ReportCategories extends Component
 
     public $expensesTotal;
 
-    public function mount(string $year, string $month)
+    public function mount($reportGeneral)
     {
-        $this->year = $year;
+        $this->year = $reportGeneral->year;
 
-        $this->month = $month;
+        $this->month = $reportGeneral->month;
 
         $this->getCategories();
     }
 
     public function getCategories()
     {
-        // $this->categories = Expense::join('categories', 'expenses.category_id', '=', 'categories.id')
-        //     ->selectRaw('categories.title, SUM(expenses.value) as total')
-        //     ->selectRaw('categories.id as category_id')
-        //     ->when($this->month != null, function (Builder $query) {
-        //         return $query->whereMonth('expenses.pay_day', $this->month);
-        //     })->groupBy('categories.id')
-        //     ->when($this->year != null, function (Builder $query) {
-        //         return $query->whereYear('expenses.pay_day', $this->year);
-        //     })->groupBy('categories.id')
-        //     ->where('expenses.user_id', Auth::user()->id)
-        //     ->orderBy('title', 'asc')
-        //     ->get();
-
-
         $this->categories = Category::orderBy('title', 'asc')
             ->get()
             ->map(function ($category) {
@@ -55,13 +38,6 @@ class ReportCategories extends Component
                         ->whereYear('pay_day', $this->year)
                         ->where('status', 'pago')
                         ->get();
-
-                    // $credits = $category->credits()
-                    //     ->whereMonth('pay_day', $this->month)
-                    //     ->whereYear('pay_day', $this->year)
-                    //     ->get();
-
-                    // $totalExpenses = $immediateExpenses->sum('value') + $credits->sum('value');
 
                     $totalExpenses = $immediateExpenses->sum('value');
 
@@ -93,7 +69,7 @@ class ReportCategories extends Component
 
     public function render()
     {
-        return view('livewire.report-categories', [
+        return view('livewire.report-general-categories', [
             'categories' => $this->categories
         ]);
     }
