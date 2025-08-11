@@ -4,56 +4,7 @@
     </x-slot>
 
     <!-- banks -->
-    <section class="pt-6">
-
-        <div class="container">
-
-            <div class="shadow-lg rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 p-4">
-
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-white">
-                        Bancos
-                    </h2>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-
-                    <!-- loop -->
-                    @foreach($banks as $bank)
-                        <div class="shadow rounded-lg flex flex-col gap-2 bg-red-500 p-4" style="background-color: {{ $bank['color'] }}">
-
-                            <div class="w-10 h-10 rounded-full overflow-hidden flex justify-center items-center bg-white/50 p-2">
-                                <img src="{{ Storage::url($bank['icon']) }}" alt="{{ $bank['title'] }}" />
-                            </div>
-
-                            <div>
-                                <p class="text-3xl font-bold text-white">
-                                    {{ $bank['remaining'] }}
-                                </p>
-                            </div>
-
-                            <div class="flex justify-between gap-2">
-                                <p class="text-xs font-medium text-white/50">
-                                    Entrada <br />
-                                    <span class="text-sm font-bold text-white">
-                                        {{ $bank['deposits']}}
-                                    </span>
-                                </p>
-
-                                <p class="text-xs font-medium text-white/50">
-                                    Saída <br />
-                                    <span class="text-sm font-bold text-white">
-                                        {{ $bank['expenses'] }}
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-                    @endforeach
-                    <!-- end loop -->
-                </div>
-            </div>
-        </div>
-    </section>
+    <livewire:report-general-bank :reportGeneral="$reportGeneral" />
     <!-- end banks -->
 
     <!-- expenses fixed -->

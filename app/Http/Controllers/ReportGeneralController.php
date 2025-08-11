@@ -52,8 +52,6 @@ class ReportGeneralController extends Controller
     {
         $dateCurrent = MonthHelper::getMonth($reportGeneral->month) . ' / ' . $reportGeneral->year;
 
-        $banks = Bank::getTotalBankValueCurrentMonth($reportGeneral->month, $reportGeneral->year);
-
         $expensesFixedPeding = ImmediateExpense::getExpensesFixedPedingCurrentMonth($reportGeneral->month, $reportGeneral->year);
 
         $expensesFixedPedingTotalValues = $expensesFixedPeding->sum(fn($expense) => is_numeric($expense->value) ? (float) $expense->value : 0);
@@ -114,7 +112,6 @@ class ReportGeneralController extends Controller
         return view('pages.single-report-general', [
             'reportGeneral'                  => $reportGeneral,
             'dateCurrent'                    => $dateCurrent,
-            'banks'                          => $banks,
             'expensesFixedPeding'            => $expensesFixedPeding,
             'expensesFixedPedingTotalValues' => $expensesFixedPedingTotalValues,
             'expensesFixedPaid'              => $expensesFixedPaid,
