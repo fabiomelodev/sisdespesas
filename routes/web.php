@@ -44,3 +44,20 @@ Route::get('relatorio-geral/{reportGeneral:code}', [ReportGeneralController::cla
 //         $deposit->save();
 //     });
 // });
+
+Route::get('ubers', function () {
+    $ubers = App\Models\Uber::each(function ($uber) {
+        ImmediateExpense::create([
+            'title' => 'Uber',
+            'value' => $uber->value,
+            'pay_day' => $uber->pay_day,
+            'status' => 'pago',
+            'type' => 'incostante',
+            'bank_id' => $uber->bank_id,
+            'category_id' => 33,
+            'mean_payment_id' => 1,
+            'created_at' => $uber->created_at,
+            'updated_at' => $uber->updated_at
+        ]);
+    });
+});
