@@ -49,26 +49,30 @@ class ReportCategories extends Component
         $this->categories = Category::orderBy('title', 'asc')
             ->get()
             ->map(function ($category) {
-                $immediateExpenses = $category->immediateExpenses()
-                    ->whereMonth('pay_day', $this->month)
-                    ->whereYear('pay_day', $this->year)
-                    ->where('status', 'pago')
-                    ->get();
+                if ($category->immediateExpenses()->whereMonth('pay_day', $this->month)->whereYear('pay_day', $this->year)->where('status', 'pago')->exists()) {
+                    $immediateExpenses = $category->immediateExpenses()
+                        ->whereMonth('pay_day', $this->month)
+                        ->whereYear('pay_day', $this->year)
+                        ->where('status', 'pago')
+                        ->get();
 
-                $credits = $category->credits()
-                    ->whereMonth('pay_day', $this->month)
-                    ->whereYear('pay_day', $this->year)
-                    ->get();
+                    // $credits = $category->credits()
+                    //     ->whereMonth('pay_day', $this->month)
+                    //     ->whereYear('pay_day', $this->year)
+                    //     ->get();
 
-                // $totalExpenses = $immediateExpenses->sum('value') + $credits->sum('value');
+                    // $totalExpenses = $immediateExpenses->sum('value') + $credits->sum('value');
 
-                $totalExpenses = $immediateExpenses->sum('value');
+                    $totalExpenses = $immediateExpenses->sum('value');
 
-                return [
-                    'id'                => $category->id,
-                    'title'             => $category->title,
-                    'totalExpenses'     => $totalExpenses,
-                ];
+                    return [
+                        'id'                => $category->id,
+                        'title'             => $category->title,
+                        'totalExpenses'     => $totalExpenses,
+                    ];
+                }
+
+                return [];
             });
     }
 
