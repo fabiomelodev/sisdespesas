@@ -4,7 +4,7 @@
     </x-slot>
 
     <!-- banks -->
-    <livewire:report-general-bank :reportGeneral="$reportGeneral" />
+    <livewire:report-general-banks :reportGeneral="$reportGeneral" />
     <!-- end banks -->
 
     <!-- expenses fixed -->
