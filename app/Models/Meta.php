@@ -32,21 +32,14 @@ class Meta extends Model
             ->where('year', $year)
             ->get()
             ->map(function ($meta) use ($month, $year) {
-                if ($meta->category()->first()->slug == 'uber') {
-                    $expensesValue = $meta->category()
-                        ->first()
-                        ->ubers()
-                        ->whereMonth('pay_day', $month)
-                        ->whereYear('pay_day', $year)->sum('value');
-                } else {
-                    $expensesValue = $meta->category()
-                        ->first()
-                        ->immediateExpenses()
-                        ->whereHas('meanPayment', fn(Builder $query) => $query->whereNot('slug', 'credito'))
-                        ->whereMonth('pay_day', $month)
-                        ->whereYear('pay_day', $year)
-                        ->sum('value');
-                }
+
+                $expensesValue = $meta->category()
+                    ->first()
+                    ->immediateExpenses()
+                    ->whereHas('meanPayment', fn(Builder $query) => $query->whereNot('slug', 'credito'))
+                    ->whereMonth('pay_day', $month)
+                    ->whereYear('pay_day', $year)
+                    ->sum('value');
 
                 $category = $meta->category()->first();
 

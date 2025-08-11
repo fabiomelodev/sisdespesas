@@ -6,7 +6,7 @@ use App\Models\Bank;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
-class ReportGeneralBank extends Component
+class ReportGeneralBanks extends Component
 {
     public $reportGeneral;
 
@@ -28,6 +28,6 @@ class ReportGeneralBank extends Component
 
     public function render()
     {
-        return view('livewire.report-general-bank');
+        return view('livewire.report-general-banks');
     }
 }

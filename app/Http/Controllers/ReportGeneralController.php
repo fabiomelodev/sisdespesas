@@ -68,43 +68,6 @@ class ReportGeneralController extends Controller
             ->whereYear('due_date', $reportGeneral->year)
             ->get();
 
-        $metas = Meta::getMetasByCategoryCurrentMonth($reportGeneral->month, $reportGeneral->year);
-
-        $ubersYearCurrent = Uber::whereYear('pay_day', $reportGeneral->year)->get();
-
-        $ubersYearCurrentTotalValue = $ubersYearCurrent->sum(fn($uber) => is_numeric((float) $uber->value) ? (float) $uber->value : 0);
-
-        $ubersYearCurrentQty = $ubersYearCurrent->count();
-
-        $ubersMonthCurrent = Uber::whereMonth('pay_day', $reportGeneral->month)
-            ->whereYear('pay_day', $reportGeneral->year)->get();
-
-        $ubersMonthCurrentTotalValue = $ubersMonthCurrent->sum(fn($uber) => is_numeric((float) $uber->value) ? (float) $uber->value : 0);
-
-        $ubersMonthCurrentQty = $ubersMonthCurrent->count();
-
-        $ubersCar = Uber::whereMonth('pay_day', $reportGeneral->month)
-            ->whereYear('pay_day', $reportGeneral->year)
-            ->where('automobile', 'car')
-            ->get();
-
-        $ubersCarTotalValues = $ubersCar->sum(fn($uber) => is_numeric((float) $uber->value) ? (float) $uber->value : 0);
-
-        $ubersCarQty = $ubersCar->count();
-
-        $ubersMotorcycle = Uber::whereMonth('pay_day', $reportGeneral->month)
-            ->whereYear('pay_day', $reportGeneral->year)
-            ->where('automobile', 'motorcycle')
-            ->get();
-
-        $ubersMotorcycleTotalValues = $ubersMotorcycle->sum(fn($uber) => is_numeric((float) $uber->value) ? (float) $uber->value : 0);
-
-        $ubersMotorcycleQty = $ubersMotorcycle->count();
-
-        $uberMeta = Uber::getMetaByDate($reportGeneral->month, $reportGeneral->year);
-
-        $uberMetaPercentage = FormatCurrency::getFormatValuePercentage($ubersMonthCurrentTotalValue, $uberMeta->value);
-
         $warnings = Warning::whereMonth('date_current', $reportGeneral->month)
             ->whereYear('date_current', $reportGeneral->year)
             ->get();
@@ -119,17 +82,6 @@ class ReportGeneralController extends Controller
             'expensesCategories'             => $expensesCategories,
             'cardCredits'                    => $cardCredits,
             'invoicesNextMonth'              => $invoicesNextMonth,
-            'metas'                          => $metas,
-            'ubersYearCurrentTotalValue'     => $ubersYearCurrentTotalValue,
-            'ubersYearCurrentQty'            => $ubersYearCurrentQty,
-            'ubersMonthCurrentTotalValue'    => $ubersMonthCurrentTotalValue,
-            'ubersMonthCurrentQty'           => $ubersMonthCurrentQty,
-            'ubersCarTotalValues'            => $ubersCarTotalValues,
-            'ubersCarQty'                    => $ubersCarQty,
-            'ubersMotorcycleTotalValues'     => $ubersMotorcycleTotalValues,
-            'ubersMotorcycleQty'             => $ubersMotorcycleQty,
-            'uberMeta'                       => $uberMeta,
-            'uberMetaPercentage'             => $uberMetaPercentage,
             'warnings'                       => $warnings
         ]);
     }
