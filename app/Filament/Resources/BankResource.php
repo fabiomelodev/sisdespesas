@@ -71,6 +71,8 @@ class BankResource extends Resource
                     ->label('Descrição'),
                 Tables\Columns\ImageColumn::make('icon_bank')
                     ->label('Ícone')
+                    ->disk('public_uploads')
+                    ->visibility('public')
             ])
             ->defaultSort('title', 'asc')
             ->filters([
