@@ -46,7 +46,6 @@ x-data="{ layout: 'grid' }">
                     <div class="shadow rounded-lg flex flex-col gap-2 bg-red-500 p-4" style="background-color: {{ $bank['color'] }}">
 
                         <div class="w-10 h-10 rounded-full overflow-hidden flex justify-center items-center bg-white/50 p-2">
-                            {{-- <img src="{{ Storage::url($bank['icon']) }}" alt="{{ $bank['title'] }}" /> --}}
                             <img src="{{ Storage::disk('public_uploads')->url($bank['icon']) }}" alt="{{ $bank['title'] }}" />
                         </div>
 

@@ -20,7 +20,7 @@
                             style="background-color: {{ $cardCredit['bank_color'] }}">
                             <div class="w-10 h-10 rounded-full overflow-hidden flex justify-center items-center bg-white/50 p-2">
                                 <img
-                                    src="{{ Storage::url($cardCredit['bank_icon']) }}"
+                                    src="{{ Storage::disk('public_uploads')->url($cardCredit['bank_icon']) }}"
                                     alt="{{ $cardCredit['title'] }}" />
                             </div>
 
