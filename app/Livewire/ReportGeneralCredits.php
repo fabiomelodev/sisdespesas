@@ -12,6 +12,8 @@ class ReportGeneralCredits extends Component
 
     public $invoicesNextMonth;
 
+    public $invoicesNextMonthTotalValues;
+
     public function mount($reportGeneral)
     {
         $this->cardCredits = CardCredit::getCardCreditsTotalCurrentMonth($reportGeneral->month, $reportGeneral->year);
@@ -19,6 +21,8 @@ class ReportGeneralCredits extends Component
         $this->invoicesNextMonth = Invoice::whereMonth('due_date', $reportGeneral->month + 1)
             ->whereYear('due_date', $reportGeneral->year)
             ->get();
+
+        $this->invoicesNextMonthTotalValues = $this->invoicesNextMonth->sum('value');
     }
 
     public function render()

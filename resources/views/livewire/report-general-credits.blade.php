@@ -53,9 +53,16 @@
                 </div>
 
                 <div>
-                    <h2 class="text-xl font-bold text-white">
-                        Faturas do próximo mês
-                    </h2>
+                    <div class="w-full flex justify-between items-center">
+
+                        <h4 class="text-lg font-bold text-white/80">
+                            Faturas do próximo mês
+                        </h4>
+
+                        <p class="text-lg font-bold text-white/80">
+                            {{ \App\Helpers\FormatCurrency::getFormatCurrency($invoicesNextMonthTotalValues) }}
+                        </p>
+                    </div>
 
                     <div class="flex flex-col gap-2 mt-4">
                         <!-- loop -->
