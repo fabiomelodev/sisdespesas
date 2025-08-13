@@ -47,7 +47,12 @@ class BankResource extends Resource
                         ColorPicker::make('color')
                             ->label('Cor'),
                         FileUpload::make('icon_bank')
-                            ->label('Ícone'),
+                            ->label('Ícone')
+                            ->disk('public_uploads')
+                            ->directory('images')
+                            ->visibility('public')
+                            ->image()
+                            ->maxSize(2048),
                         DatePicker::make('created_at')
                             ->label('Criado em')
                             ->hiddenOn('create')
